@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
 import "./OfferWeightCalculator.css";
+import calcGraphic from "../../assets/ai_management.png";
 
 export default function OfferWeightCalculator() {
     const defaultOffer = {
@@ -24,11 +25,9 @@ export default function OfferWeightCalculator() {
                 const s = parseFloat(off.salary) || 0;
                 const c = parseFloat(off.commute) || 0;
 
-                // Normalizing 
-                // Salary (40%), Growth (25%), Commute (15% negative), Stability (10%), Benefits (10%)
-                const salaryScore = (s / 200000) * 40; // Max ref 200k
+                const salaryScore = (s / 200000) * 40; 
                 const growthScore = off.growth * 2.5;
-                const commutePenalty = (c / 120) * 15; // Max ref 120min
+                const commutePenalty = (c / 120) * 15; 
                 const stabilityScore = off.stability * 1.0;
                 const benefitsScore = off.benefits * 1.0;
 
@@ -39,20 +38,19 @@ export default function OfferWeightCalculator() {
             const scoreA = processOffer(offerA);
             const scoreB = processOffer(offerB);
 
-            // Verdict Logic
             let verdict = "";
             if (Math.abs(scoreA - scoreB) < 5) {
-                verdict = "Both offers are remarkably similar in total life value. Choose based on the specific team culture or personal gut feeling.";
+                verdict = "Statistical equilibrium reached. Both offers represent similar potential energy. Base your final selection on team cultural resonance.";
             } else if (scoreA > scoreB) {
                 const reason = offerA.salary > offerB.salary && scoreA > scoreB
-                    ? "Offer A provides the best financial and lifestyle balance."
-                    : "Even with a potentially lower salary, Offer A wins due to superior growth and shorter commute.";
-                verdict = `Offer A is the strategic winner. ${reason}`;
+                    ? "Offer A provides optimal fiscal throughput and lifestyle alignment."
+                    : "Despite variance in base compensation, Offer A wins due to superior growth velocity and reduced transit overhead.";
+                verdict = `Offer A is the strategic vector winner. ${reason}`;
             } else {
                 const reason = offerB.salary > offerA.salary && scoreB > scoreA
-                    ? "Offer B provides the best financial and lifestyle balance."
-                    : "Offer B is the clear choice for your long-term career health, despite the base salary difference.";
-                verdict = `Offer B is the strategic winner. ${reason}`;
+                    ? "Offer B suggests a higher probability of life satisfaction and long-term accumulation."
+                    : "Offer B is the definitive choice for long-term career resilience, despite initial salary parameters.";
+                verdict = `Offer B represents the optimal career path. ${reason}`;
             }
 
             setResult({
@@ -62,6 +60,7 @@ export default function OfferWeightCalculator() {
                 verdict: verdict
             });
             setIsAnalyzing(false);
+            window.scrollTo({ top: 800, behavior: 'smooth' });
         }, 1500);
     };
 
@@ -70,120 +69,140 @@ export default function OfferWeightCalculator() {
     };
 
     return (
-        <div className="container-fluid p-0 offer-calc-container">
+        <div className="container-fluid p-0 login-grand-wrapper">
             <Header />
-            <div className="container">
-                <div className="row justify-content-center">
-                    <div className="col-lg-12">
-                        <div className="calc-card mb-5">
-                            <div className="text-center mb-5">
-                                <h1 className="fw-bold">AI Offer-Weight Calculator ⚖️</h1>
-                                <p className="text-muted">Compare job offers by "Total Life Value" – because your career is more than just a paycheck.</p>
+            <div className="container offer-calc-container">
+                <div className="text-center mb-5">
+                    <div className="position-relative d-inline-block mb-4">
+                        <div className="glow-effect" style={{top:'50%', left:'50%', transform:'translate(-50%, -50%)', width:'150%', height:'150%'}}></div>
+                        <img src={calcGraphic} alt="Offer Calculator" className="img-fluid rounded-4 shadow-lg position-relative z-2" style={{maxWidth: '280px'}} />
+                    </div>
+                    <h1 className="text-white fw-bold">Neural <span className="text-cyan">Balancer</span></h1>
+                    <p className="text-secondary">Quantifying the 'Total Life Value' of career opportunities beyond baseline compensation.</p>
+                </div>
+
+                <div className="calc-card">
+                    <div className="row g-5">
+                        {/* Offer A Column */}
+                        <div className="col-lg-5">
+                            <div className="offer-header header-a">VECTOR ALPHA (OFFER A)</div>
+                            <div className="mb-4">
+                                <label className="input-group-label">PROJECTED SALARY ($)</label>
+                                <input type="number" className="glass-input w-100" placeholder="e.g. 85000"
+                                    value={offerA.salary} onChange={(e) => handleInput(offerA, setOfferA, 'salary', e.target.value)} />
                             </div>
-
-                            <div className="row g-4">
-                                {/* Offer A Column */}
-                                <div className="col-md-5">
-                                    <div className="offer-header header-a text-uppercase">Offer A</div>
-                                    <div className="mb-3">
-                                        <label className="input-group-label">Annual Salary ($)</label>
-                                        <input type="number" className="form-control calc-input" placeholder="e.g. 85000"
-                                            value={offerA.salary} onChange={(e) => handleInput(offerA, setOfferA, 'salary', e.target.value)} />
-                                    </div>
-                                    <div className="mb-3">
-                                        <label className="input-group-label">Daily Commute (Total Minutes)</label>
-                                        <input type="number" className="form-control calc-input" placeholder="e.g. 45"
-                                            value={offerA.commute} onChange={(e) => handleInput(offerA, setOfferA, 'commute', e.target.value)} />
-                                    </div>
-                                    <div className="mb-3">
-                                        <label className="input-group-label">Career Growth (1-10)</label>
-                                        <input type="range" className="form-range" min="1" max="10"
-                                            value={offerA.growth} onChange={(e) => handleInput(offerA, setOfferA, 'growth', e.target.value)} />
-                                    </div>
-                                    <div className="mb-3">
-                                        <label className="input-group-label">Benefits & Healthcare (1-10)</label>
-                                        <input type="range" className="form-range" min="1" max="10"
-                                            value={offerA.benefits} onChange={(e) => handleInput(offerA, setOfferA, 'benefits', e.target.value)} />
-                                    </div>
-                                    <div className="mb-3">
-                                        <label className="input-group-label">Company Stability (1-10)</label>
-                                        <input type="range" className="form-range" min="1" max="10"
-                                            value={offerA.stability} onChange={(e) => handleInput(offerA, setOfferA, 'stability', e.target.value)} />
-                                    </div>
-                                </div>
-
-                                {/* Divider / VS */}
-                                <div className="col-md-2 d-flex flex-column justify-content-center align-items-center">
-                                    <div className="fw-bold fs-2 text-muted opacity-25">VS</div>
-                                    <button className="btn btn-analyze mt-4" onClick={calculateValues} disabled={isAnalyzing}>
-                                        {isAnalyzing ? "..." : "Analyze"}
-                                    </button>
-                                </div>
-
-                                {/* Offer B Column */}
-                                <div className="col-md-5">
-                                    <div className="offer-header header-b text-uppercase">Offer B</div>
-                                    <div className="mb-3">
-                                        <label className="input-group-label">Annual Salary ($)</label>
-                                        <input type="number" className="form-control calc-input" placeholder="e.g. 95000"
-                                            value={offerB.salary} onChange={(e) => handleInput(offerB, setOfferB, 'salary', e.target.value)} />
-                                    </div>
-                                    <div className="mb-3">
-                                        <label className="input-group-label">Daily Commute (Total Minutes)</label>
-                                        <input type="number" className="form-control calc-input" placeholder="e.g. 20"
-                                            value={offerB.commute} onChange={(e) => handleInput(offerB, setOfferB, 'commute', e.target.value)} />
-                                    </div>
-                                    <div className="mb-3">
-                                        <label className="input-group-label">Career Growth (1-10)</label>
-                                        <input type="range" className="form-range" min="1" max="10"
-                                            value={offerB.growth} onChange={(e) => handleInput(offerB, setOfferB, 'growth', e.target.value)} />
-                                    </div>
-                                    <div className="mb-3">
-                                        <label className="input-group-label">Benefits & Healthcare (1-10)</label>
-                                        <input type="range" className="form-range" min="1" max="10"
-                                            value={offerB.benefits} onChange={(e) => handleInput(offerB, setOfferB, 'benefits', e.target.value)} />
-                                    </div>
-                                    <div className="mb-3">
-                                        <label className="input-group-label">Company Stability (1-10)</label>
-                                        <input type="range" className="form-range" min="1" max="10"
-                                            value={offerB.stability} onChange={(e) => handleInput(offerB, setOfferB, 'stability', e.target.value)} />
-                                    </div>
-                                </div>
+                            <div className="mb-4">
+                                <label className="input-group-label">TRANSIT LATENCY (MINUTES)</label>
+                                <input type="number" className="glass-input w-100" placeholder="e.g. 45"
+                                    value={offerA.commute} onChange={(e) => handleInput(offerA, setOfferA, 'commute', e.target.value)} />
                             </div>
+                            <div className="mb-4">
+                                <label className="input-group-label d-flex justify-content-between">
+                                    GROWTH VELOCITY <span>{offerA.growth}/10</span>
+                                </label>
+                                <input type="range" className="form-range" min="1" max="10"
+                                    value={offerA.growth} onChange={(e) => handleInput(offerA, setOfferA, 'growth', e.target.value)} />
+                            </div>
+                            <div className="mb-4">
+                                <label className="input-group-label d-flex justify-content-between">
+                                    BENEFITS INDEX <span>{offerA.benefits}/10</span>
+                                </label>
+                                <input type="range" className="form-range" min="1" max="10"
+                                    value={offerA.benefits} onChange={(e) => handleInput(offerA, setOfferA, 'benefits', e.target.value)} />
+                            </div>
+                            <div className="mb-4">
+                                <label className="input-group-label d-flex justify-content-between">
+                                    SYSTEM STABILITY <span>{offerA.stability}/10</span>
+                                </label>
+                                <input type="range" className="form-range" min="1" max="10"
+                                    value={offerA.stability} onChange={(e) => handleInput(offerA, setOfferA, 'stability', e.target.value)} />
+                            </div>
+                        </div>
 
-                            {result && (
-                                <div className="comparison-result mt-5">
-                                    <div className="row text-center mb-4">
-                                        <div className="col-6">
-                                            <h4>Offer A</h4>
-                                            <div className="score-bar-container">
-                                                <div className="score-bar bar-a" style={{ width: `${result.scoreA}%` }}></div>
-                                            </div>
-                                            <div className="fs-3 fw-bold">{result.scoreA} <small className="fs-6 opacity-50">/ 100</small></div>
-                                        </div>
-                                        <div className="col-6">
-                                            <h4>Offer B</h4>
-                                            <div className="score-bar-container">
-                                                <div className="score-bar bar-b" style={{ width: `${result.scoreB}%` }}></div>
-                                            </div>
-                                            <div className="fs-3 fw-bold">{result.scoreB} <small className="fs-6 opacity-50">/ 100</small></div>
-                                        </div>
-                                    </div>
+                        {/* VS Indicator */}
+                        <div className="col-lg-2 d-flex flex-column justify-content-center align-items-center">
+                            <div className="text-secondary opacity-25 fw-black display-4 mb-4">VS</div>
+                            <button className="btn btn-cyan-glow w-100 py-3 fw-bold" onClick={calculateValues} disabled={isAnalyzing}>
+                                {isAnalyzing ? <i className="fa-solid fa-spinner fa-spin"></i> : "EQUILIBRIUM"}
+                            </button>
+                        </div>
 
-                                    <div className="verdict-box mt-4">
-                                        <div className="d-flex justify-content-between align-items-center mb-2">
-                                            <h5 className="mb-0">AI Strategic Verdict</h5>
-                                            <span className="winner-badge">{result.winner === "Offer A" ? "🏆 Offer A Wins" : "🏆 Offer B Wins"}</span>
-                                        </div>
-                                        <p className="lead mb-0" style={{ fontSize: '1.1rem' }}>{result.verdict}</p>
-                                    </div>
-                                </div>
-                            )}
+                        {/* Offer B Column */}
+                        <div className="col-lg-5">
+                            <div className="offer-header header-b">VECTOR BETA (OFFER B)</div>
+                            <div className="mb-4">
+                                <label className="input-group-label">PROJECTED SALARY ($)</label>
+                                <input type="number" className="glass-input w-100" placeholder="e.g. 95000"
+                                    value={offerB.salary} onChange={(e) => handleInput(offerB, setOfferB, 'salary', e.target.value)} />
+                            </div>
+                            <div className="mb-4">
+                                <label className="input-group-label">TRANSIT LATENCY (MINUTES)</label>
+                                <input type="number" className="glass-input w-100" placeholder="e.g. 20"
+                                    value={offerB.commute} onChange={(e) => handleInput(offerB, setOfferB, 'commute', e.target.value)} />
+                            </div>
+                            <div className="mb-4">
+                                <label className="input-group-label d-flex justify-content-between">
+                                    GROWTH VELOCITY <span>{offerB.growth}/10</span>
+                                </label>
+                                <input type="range" className="form-range" min="1" max="10"
+                                    value={offerB.growth} onChange={(e) => handleInput(offerB, setOfferB, 'growth', e.target.value)} />
+                            </div>
+                            <div className="mb-4">
+                                <label className="input-group-label d-flex justify-content-between">
+                                    BENEFITS INDEX <span>{offerB.benefits}/10</span>
+                                </label>
+                                <input type="range" className="form-range" min="1" max="10"
+                                    value={offerB.benefits} onChange={(e) => handleInput(offerB, setOfferB, 'benefits', e.target.value)} />
+                            </div>
+                            <div className="mb-4">
+                                <label className="input-group-label d-flex justify-content-between">
+                                    SYSTEM STABILITY <span>{offerB.stability}/10</span>
+                                </label>
+                                <input type="range" className="form-range" min="1" max="10"
+                                    value={offerB.stability} onChange={(e) => handleInput(offerB, setOfferB, 'stability', e.target.value)} />
+                            </div>
                         </div>
                     </div>
+
+                    {result && (
+                        <div className="comparison-result animate-in">
+                            <div className="row text-center align-items-center">
+                                <div className="col-md-5">
+                                    <h4 className="text-white mb-3">Alpha Index</h4>
+                                    <div className="display-4 fw-bold text-cyan">{result.scoreA}%</div>
+                                    <div className="score-bar-container">
+                                        <div className="score-bar bar-a" style={{ width: `${result.scoreA}%` }}></div>
+                                    </div>
+                                </div>
+                                <div className="col-md-2 text-secondary fw-bold fs-3">PHI</div>
+                                <div className="col-md-5">
+                                    <h4 className="text-white mb-3">Beta Index</h4>
+                                    <div className="display-4 fw-bold text-purple">{result.scoreB}%</div>
+                                    <div className="score-bar-container">
+                                        <div className="score-bar bar-b" style={{ width: `${result.scoreB}%` }}></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="verdict-box">
+                                <div className="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 className="text-white mb-0 uppercase tracking-widest"><i className="fa-solid fa-brain text-cyan me-2"></i>Strategic Synthesis</h5>
+                                    <span className="winner-badge">{result.winner} IS OPTIMAL</span>
+                                </div>
+                                <p className="text-white opacity-90 fs-5">{result.verdict}</p>
+                            </div>
+
+                            <div className="text-center mt-5">
+                                <button className="btn btn-link text-secondary text-decoration-none" onClick={() => setResult(null)}>
+                                    <i className="fa-solid fa-rotate-left me-2"></i>Reset Comparison Matrix
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
             <Footer />
         </div>
     );
 }
+

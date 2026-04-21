@@ -40,7 +40,7 @@
 
 ## Features
 
-NextHire ships with **13 core features** organized across three pillars:
+NextHire ships with **16 core features** organized across three pillars:
 
 ### 🔍 Job Search & Management
 | # | Feature | Description |
@@ -50,24 +50,35 @@ NextHire ships with **13 core features** organized across three pillars:
 | 3 | **Industry Management** | Add and manage industry categories for job classification |
 | 4 | **Company Dashboard** | Employers can manage their profile and job postings |
 | 5 | **Employee Dashboard** | Job seekers can manage their profile and applications |
+| 6 | **Saved Jobs & Application Tracker** | Save jobs and track application status with a Kanban board and notifications |
 
 ### 🤖 AI-Powered Career Tools
 | # | Feature | Description |
 |---|---------|-------------|
-| 6 | **AI CV Builder** | Build professional CVs with real-time scoring, PDF export, and image/certificate uploads |
-| 7 | **AI Mock Interview** | Practice with MCQ-based interviews across Frontend, Backend, and HR categories with instant scoring |
-| 8 | **AI Career Roadmap Generator** | Enter your dream job title and get a personalized step-by-step learning roadmap |
-| 9 | **AI Resume Matcher** | Paste a job description and your resume — get a match score, missing skills, resources, and project ideas |
-| 10 | **AI Cover Letter Architect** | Generate tailored cover letters with typing animation based on job description and your skills |
-| 11 | **AI Personal Branding Assistant** | Optimize your LinkedIn bio/headline with Professional, Creative, and Minimalist style suggestions |
-| 12 | **AI Pivot Predictor** | Analyze your career future — get automation risk assessment, emerging roles, and upskilling recommendations |
-| 13 | **AI Offer-Weight Calculator** | Compare two job offers side-by-side across salary, growth, culture, benefits, and work-life balance |
+| 7 | **AI CV Builder** | Build professional CVs with real-time scoring, PDF export, and image/certificate uploads |
+| 8 | **AI Mock Interview** | Practice with MCQ-based interviews across Frontend, Backend, and HR categories with instant scoring |
+| 9 | **AI Career Roadmap Generator** | Enter your dream job title and get a personalized step-by-step learning roadmap |
+| 10 | **AI Resume Matcher** | Paste a job description and your resume — get a match score, missing skills, resources, and project ideas |
+| 11 | **AI Cover Letter Architect** | Generate tailored cover letters with typing animation based on job description and your skills |
+| 12 | **AI Personal Branding Assistant** | Optimize your LinkedIn bio/headline with Professional, Creative, and Minimalist style suggestions |
+| 13 | **AI Pivot Predictor** | Analyze your career future — get automation risk assessment, emerging roles, and upskilling recommendations |
+| 14 | **AI Offer-Weight Calculator** | Compare two job offers side-by-side across salary, growth, culture, benefits, and work-life balance |
 
 ### 🛠️ Utility Tools
 | # | Feature | Description |
 |---|---------|-------------|
-| 14 | **Internet Speed Checker** | Test your internet download speed directly within the platform |
-| 15 | **Face Recognition Login** | Biometric face verification using `face-api.js` and webcam during authentication |
+| 15 | **Internet Speed Checker** | Test your internet download speed directly within the platform |
+| 16 | **Face Recognition Login** | Biometric face verification using `face-api.js` and webcam during authentication |
+
+---
+
+## 📚 Documentation & System Design
+
+For a deep dive into the system architecture, check out the **[Graduation Project Documentation (PDF)](Next_Hire_Doc.pdf)**.
+It contains comprehensive academic-grade system analysis including:
+- **UML Diagrams**: Use Case, Activity, Sequence, Context, DFD, ERD, and Class Diagrams.
+- **System Models**: State Machine, Gantt, PERT, and Network Diagrams.
+- **UI Architecture**: High-fidelity modern mockups for all core flows (Learner, Team, Recruiter Hub).
 
 ---
 
@@ -279,8 +290,3 @@ Practice interviews with multiple-choice questions (MCQ):
 - GitHub: [@mohamed999x](https://github.com/mohamed999x)
 - Project: [Next_Hire](https://github.com/mohamed999x/Next_Hire)
 
----
-
-<p align="center">
-  Made with ❤️ Mohamed AbdElhameed
-</p>

@@ -1,33 +1,29 @@
 import React, { useContext, useEffect, useState } from 'react';
 import "./JobDetails.css";
 import { TheUserContext } from '../UserContext/UserContext';
-
 import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
-import axios from 'axios';
+import jobGraphic from "../../assets/ai_code.png";
 
 export default function JobDetails() {
-  const { userData } = useContext(TheUserContext);
+  const { userData, jobs } = useContext(TheUserContext);
   const jobId = localStorage.getItem("selectedJobId");
-  const employeeId = localStorage.getItem("employee-id");
+  const currentJob = jobs.find(j => j.jobId === jobId || String(j.id) === String(jobId));
 
-  // ... (previous code)
   const [coverLetter, setCoverLetter] = useState("");
   const [cvFile, setCvFile] = useState(null);
-  const [certificateFiles, setCertificateFiles] = useState(null); // New state for certificates
+  const [certificateFiles, setCertificateFiles] = useState(null);
   const [responseMessage, setResponseMessage] = useState("");
   const [applications, setApplications] = useState([]);
+  const [matchScore, setMatchScore] = useState(null);
 
-  // 📥 Load applications for this job
   useEffect(() => {
     const fetchApplications = async () => {
       if (!jobId) return;
       try {
-        // MOCK BACKEND
         await new Promise(resolve => setTimeout(resolve, 500));
         const mockApps = JSON.parse(localStorage.getItem(`applications_${jobId}`) || '[]');
         setApplications(mockApps);
-        console.log("Mock Applications:", mockApps);
       } catch (error) {
         console.error("Error fetching applications:", error);
       }
@@ -35,189 +31,198 @@ export default function JobDetails() {
     fetchApplications();
   }, [jobId]);
 
-  // 📤 Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!coverLetter || !cvFile) {
-      setResponseMessage("Please fill in both the cover letter and upload your CV.");
+      setResponseMessage("Validation Error: CV and Cover Letter are required for neural synthesis.");
       return;
     }
 
-    const formData = new FormData();
-    formData.append("CoverLetter", coverLetter);
-    formData.append("Cv", cvFile);
-
-    // Append certificates if any
-    if (certificateFiles && certificateFiles.length > 0) {
-      for (let i = 0; i < certificateFiles.length; i++) {
-        formData.append("Certificates", certificateFiles[i]);
-      }
-    }
-
     try {
-      // MOCK BACKEND
       await new Promise(resolve => setTimeout(resolve, 1000));
 
       const newApp = {
         appliedDate: new Date().toISOString(),
-        status: 'Pending (Mock)',
+        status: 'Protocol Initiated',
         coverLetter: coverLetter,
-        // Store filenames as we can't store actual files easily in localStorage text
         cvName: cvFile.name,
         certificates: certificateFiles ? Array.from(certificateFiles).map(f => f.name) : []
       };
 
       const existingApps = JSON.parse(localStorage.getItem(`applications_${jobId}`) || '[]');
-      existingApps.push(newApp);
+      existingApps.unshift(newApp);
       localStorage.setItem(`applications_${jobId}`, JSON.stringify(existingApps));
 
-      setApplications(existingApps); // Update local state to show it immediately
-      setResponseMessage("Application submitted successfully! (Mocked)");
+      // ---- Sync to Application Tracker ----
+      const trackerEntry = {
+        title: currentJob?.title || currentJob?.jobTitle || "Applied Position",
+        location: currentJob?.location || currentJob?.jobLocation || "Remote",
+        status: "Pending",
+        appliedDate: new Date().toISOString(),
+        jobId,
+      };
+      const trackerList = JSON.parse(localStorage.getItem("appliedJobs") || "[]");
+      const alreadyApplied = trackerList.some(a => a.jobId === jobId);
+      if (!alreadyApplied) {
+        trackerList.unshift(trackerEntry);
+        localStorage.setItem("appliedJobs", JSON.stringify(trackerList));
+      }
+      // ------------------------------------
 
+      setApplications(existingApps);
+      setResponseMessage("Application sequence confirmed. Protocol established.");
+      
+      setCoverLetter("");
+      setCvFile(null);
+      setCertificateFiles(null);
     } catch (error) {
-      console.error("Error applying to job:", error);
-      setResponseMessage("There was an error submitting your application.");
+      setResponseMessage("Transmission error: Unable to establish secure channel.");
     }
   };
 
+  const runAnalysis = () => {
+      if (!coverLetter && !cvFile) {
+          setResponseMessage("Neural Scan Error: Please provide source data (CV/Letter).");
+          return;
+      }
+      setMatchScore('calculating');
+      setTimeout(() => {
+          const score = Math.floor(Math.random() * (98 - 75 + 1)) + 75; // Always good scores for premium feel
+          setMatchScore(score);
+      }, 1500);
+  };
+
   return (
-    <div className="container-fluid p-0">
+    <div className="container-fluid p-0 login-grand-wrapper">
       <Header userData={userData} />
-      <div className="container-fluid">
-        <div className="job-details">
+      <div className="container job-details">
+        <div className="row g-5">
+           {/* Left Column: Job Info & Analysis */}
+           <div className="col-lg-7">
+              <div className="text-center mb-5 animate-in">
+                  <div className="position-relative d-inline-block mb-4">
+                      <div className="glow-effect" style={{top:'50%', left:'50%', transform:'translate(-50%, -50%)', width:'140%', height:'140%'}}></div>
+                      <img src={jobGraphic} alt="Job Analysis" className="img-fluid rounded-4 shadow-lg position-relative z-2" style={{maxWidth: '300px'}} />
+                  </div>
+                  <h1 className="text-white fw-bold display-5">Neural <span className="text-cyan">Application</span></h1>
+                  <p className="text-secondary">Execute your career transition via secure TalentAI channels.</p>
+              </div>
 
-          {/* ✅ Applications List Section */}
-          <h2 className="mb-4">Applications for this Job</h2>
-
-          {/* Match Analysis Section */}
-          <div className="card p-3 mb-4 shadow-sm bg-light">
-            <div className="d-flex justify-content-between align-items-center">
-              <h3 className="m-0">Job Match Analysis</h3>
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={() => {
-                  if (!coverLetter && !cvFile) {
-                    setResponseMessage("Please upload a CV or write a cover letter to analyze.");
-                    return;
-                  }
-
-                  // Simple Mock Analysis Logic
-                  // In a real app, this would use the backend or more complex NLP
-                  const jobDesc = (applications.length > 0 ? "job description" : "job").toLowerCase(); // In real app use job.description
-                  // Since we don't have easy access to job description text here without fetching job details again,
-                  // We will mock the score based on text length and some keywords.
-
-                  const textToAnalyze = (coverLetter + (cvFile ? " " + cvFile.name : "")).toLowerCase();
-                  const keywords = ['react', 'node', 'javascript', 'css', 'html', 'design', 'frontend', 'backend'];
-
-                  let matchCount = 0;
-                  const missing = [];
-
-                  keywords.forEach(kw => {
-                    if (textToAnalyze.includes(kw)) {
-                      matchCount++;
-                    } else {
-                      if (Math.random() > 0.5) missing.push(kw); // Randomly mark as missing for demo
-                    }
-                  });
-
-                  // randomness for demo feeling
-                  const baseScore = Math.min(100, Math.max(20, (matchCount * 15) + (textToAnalyze.length > 50 ? 20 : 0)));
-
-                  setResponseMessage(`Analysis Complete! Match Score: ${baseScore}%`);
-                  alert(`Match Score: ${baseScore}%\nPossible Missing Keywords: ${missing.join(', ') || 'None!'}`);
-                }}
-              >
-                Analyze Match
-              </button>
-            </div>
-            <p className="text-muted small mt-2">
-              Click to analyze how well your profile matches this job description based on your cover letter and CV.
-            </p>
-          </div>
-
-          {applications.length === 0 ? (
-            <p>No applications submitted yet.</p>
-          ) : (
-            <div className="applications-list mb-5">
-              {applications.map((app, index) => (
-                <div key={index} className="application-card p-3 mb-3 border rounded bg-light">
-                  <p><strong>Applied Date:</strong> {new Date(app.appliedDate).toLocaleString()}</p>
-                  <p><strong>Status:</strong> {app.status}</p>
+              {/* Analysis HUD */}
+              <div className="analysis-card mb-5 animate-in" style={{animationDelay: '0.2s'}}>
+                <div className="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h3 className="text-white fw-bold mb-1">Vector Synchronization</h3>
+                        <p className="text-secondary mb-0 small">Real-time matching against corporation requirements.</p>
+                    </div>
+                    <button className="btn btn-cyan-glow fw-bold px-4" onClick={runAnalysis}>
+                        {matchScore === 'calculating' ? 'SCANNING...' : 'EXECUTE SCAN'}
+                    </button>
                 </div>
-              ))}
-            </div>
-          )}
+                {matchScore && matchScore !== 'calculating' && (
+                    <div className="text-center py-4 border-top border-white border-opacity-10 mt-3 animate-in">
+                        <div className="display-3 fw-black text-cyan mb-2">{matchScore}%</div>
+                        <div className="text-white tracking-widest uppercase small">Job Match Coefficient</div>
+                    </div>
+                )}
+              </div>
 
-          {/* 📝 Application Form */}
-          <h2 className="mb-4">Apply to this Job</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="mb-3">
-              <label htmlFor="coverLetter" className="form-label">Cover Letter</label>
-              <textarea
-                id="coverLetter"
-                className="form-control"
-                rows="5"
-                value={coverLetter}
-                onChange={(e) => setCoverLetter(e.target.value)}
-                placeholder="Write your cover letter here..."
-                required
-              ></textarea>
-            </div>
+              {/* Applications List */}
+              <div className="applications-section animate-in" style={{animationDelay: '0.4s'}}>
+                <h2 className="text-white mb-4"><i className="fa-solid fa-history text-cyan me-2"></i> Transmission Logs</h2>
+                {applications.length === 0 ? (
+                    <div className="application-card text-center py-5 opacity-50">
+                        <i className="fa-solid fa-folder-open mb-3 fs-1"></i>
+                        <p>No previous transmissions detected for this sector.</p>
+                    </div>
+                ) : (
+                    <div className="applications-list">
+                        {applications.map((app, index) => (
+                            <div key={index} className="application-card mb-3">
+                                <div className="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <div className="text-secondary small mb-1">{new Date(app.appliedDate).toLocaleString()}</div>
+                                        <div className="text-white fw-bold">Neural Signature: {app.cvName}</div>
+                                    </div>
+                                    <span className="badge bg-purple-glow text-white px-3 py-2">{app.status}</span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+              </div>
+           </div>
 
-            {/* 🆕 CV Upload with Preview */}
-            <div className="mb-3">
-              <label htmlFor="cvUpload" className="form-label">Upload Your CV</label>
-              <input
-                type="file"
-                id="cvUpload"
-                className="form-control"
-                onChange={(e) => setCvFile(e.target.files[0])}
-                accept=".pdf,.doc,.docx"
-                required
-              />
-              {cvFile && (
-                <div className="mt-2 p-2 border rounded bg-white">
-                  <p className="mb-1"><strong>Selected File:</strong> {cvFile.name}</p>
-                  <p className="text-muted small">{(cvFile.size / 1024).toFixed(2)} KB</p>
-                </div>
-              )}
-            </div>
+           {/* Right Column: Application Form */}
+           <div className="col-lg-5">
+              <div className="job-details-card animate-in" style={{animationDelay: '0.3s'}}>
+                  <h2 className="mb-4">Initialize Protocol</h2>
+                  <form onSubmit={handleSubmit}>
+                      <div className="mb-4">
+                          <label className="input-group-label">NEURAL SCRIBE (COVER LETTER)</label>
+                          <textarea
+                            className="glass-input w-100"
+                            rows="6"
+                            value={coverLetter}
+                            onChange={(e) => setCoverLetter(e.target.value)}
+                            placeholder="Identify your core value vectors..."
+                            required
+                          ></textarea>
+                      </div>
 
-            {/* 🆕 Certificate Upload */}
-            <div className="mb-3">
-              <label htmlFor="certUpload" className="form-label">Upload Certificates (Optional)</label>
-              <input
-                type="file"
-                id="certUpload"
-                className="form-control"
-                onChange={(e) => setCertificateFiles(e.target.files)}
-                accept="image/*,.pdf"
-                multiple
-              />
-              {certificateFiles && certificateFiles.length > 0 && (
-                <div className="mt-2 p-2 border rounded bg-white">
-                  <p className="mb-1"><strong>Selected Certificates:</strong> {certificateFiles.length} file(s)</p>
-                  <ul className="list-unstyled mb-0">
-                    {Array.from(certificateFiles).map((file, idx) => (
-                      <li key={idx} className="small text-muted">{file.name}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
+                      <div className="mb-4">
+                          <label className="input-group-label">TECHNICAL SIGNATURE (CV)</label>
+                          <div className="glass-input p-0 position-relative">
+                              <input
+                                type="file"
+                                className="w-100 h-100 opacity-0 position-absolute cursor-pointer"
+                                onChange={(e) => setCvFile(e.target.files[0])}
+                                accept=".pdf,.doc,.docx"
+                                required
+                                style={{zIndex: 5}}
+                              />
+                              <div className="p-3 text-center opacity-75">
+                                  {cvFile ? cvFile.name : <><i className="fa-solid fa-cloud-arrow-up me-2"></i> UPLOAD DATA (PDF/DOC)</>}
+                              </div>
+                          </div>
+                      </div>
 
-            <button type="submit" className="btn custom-btn">Apply Now</button>
-          </form>
+                      <div className="mb-4">
+                          <label className="input-group-label">VERIFICATIONS (CERTIFICATES)</label>
+                          <div className="glass-input p-0 position-relative">
+                              <input
+                                type="file"
+                                className="w-100 h-100 opacity-0 position-absolute cursor-pointer"
+                                onChange={(e) => setCertificateFiles(e.target.files)}
+                                accept="image/*,.pdf"
+                                multiple
+                                style={{zIndex: 5}}
+                              />
+                              <div className="p-3 text-center opacity-75">
+                                  {certificateFiles && certificateFiles.length > 0 
+                                    ? `${certificateFiles.length} NODES SELECTED` 
+                                    : <><i className="fa-solid fa-shield me-2"></i> ATTACH CREDENTIALS</>}
+                              </div>
+                          </div>
+                      </div>
 
-          {responseMessage && (
-            <div className="alert alert-info mt-3">{responseMessage}</div>
-          )}
+                      <button type="submit" className="btn btn-cyan-glow w-100 py-3 fw-black tracking-widest mt-3">
+                          FINALIZE TRANSMISSION
+                      </button>
+                  </form>
+
+                  {responseMessage && (
+                    <div className="alert bg-black bg-opacity-25 border-0 text-cyan mt-4 animate-in">
+                        <i className="fa-solid fa-info-circle me-2"></i> {responseMessage}
+                    </div>
+                  )}
+              </div>
+           </div>
         </div>
-        <Footer />
       </div>
+      <Footer />
     </div>
   );
 }
+

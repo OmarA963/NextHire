@@ -1,0 +1,319 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+@page {
+    size: A4;
+    margin: 2.5cm;
+    @bottom-center {
+        content: counter(page);
+        font-family: 'Inter', sans-serif;
+        font-size: 10pt;
+        color: #64748b;
+    }
+}
+
+@page :first {
+    margin: 0;
+    @bottom-center {
+        content: "";
+    }
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    color: #334155;
+    line-height: 1.7;
+    font-size: 11pt;
+}
+
+/* Cover Page Styles */
+.cover-page {
+    text-align: center;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    margin: -2.5cm -2.5cm 0 -2.5cm; /* Pull it to the edges of the page */
+    padding: 3cm 1cm;
+    height: 29.7cm; /* Ensure it takes full page */
+    box-sizing: border-box;
+    page-break-after: always;
+    page-break-inside: avoid;
+}
+
+.cover-content {
+    background: white;
+    padding: 60px;
+    border-radius: 24px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.faculty-badge {
+    display: inline-block;
+    padding: 12px 32px;
+    border-radius: 50px;
+    background-color: #0284c7;
+    color: white;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    margin-bottom: 60px;
+    box-shadow: 0 10px 20px rgba(2, 132, 199, 0.2);
+}
+
+.project-title {
+    font-size: 5rem !important;
+    color: #0f172a !important;
+    margin-bottom: 20px !important;
+    font-weight: 900 !important;
+    letter-spacing: -2px !important;
+    line-height: 1 !important;
+    border: none !important;
+}
+
+.highlight {
+    color: #0284c7;
+}
+
+.project-subtitle {
+    font-size: 2.2rem !important;
+    color: #475569 !important;
+    margin-bottom: 50px !important;
+    font-weight: 300 !important;
+    letter-spacing: -0.5px !important;
+}
+
+.divider {
+    width: 100px;
+    height: 6px;
+    background: linear-gradient(90deg, #0284c7, #38bdf8);
+    margin: 0 auto 50px auto;
+    border-radius: 3px;
+}
+
+.doc-type {
+    color: #64748b !important;
+    font-weight: 600 !important;
+    font-size: 1.5rem !important;
+    letter-spacing: 4px !important;
+    text-transform: uppercase !important;
+}
+
+.meta-box {
+    margin-top: 80px;
+    font-size: 1.1rem;
+    color: #1e293b;
+    background: #f8fafc;
+    padding: 30px 40px;
+    border-radius: 16px;
+    text-align: left;
+    border-left: 6px solid #0284c7;
+}
+
+.meta-box table {
+    width: 100%;
+    margin: 0;
+    box-shadow: none;
+    background: transparent;
+}
+
+.meta-box td {
+    padding: 12px 20px;
+    border: none;
+    background: transparent;
+}
+
+.meta-label {
+    color: #64748b;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.95rem;
+    width: 40%;
+}
+
+.meta-value {
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+
+.abstract-title {
+    font-size: 36pt !important;
+    text-align: center;
+    color: #0f172a !important;
+    margin-bottom: 40px !important;
+    border: none !important;
+}
+
+.abstract-text {
+    font-size: 12pt;
+    line-height: 1.8;
+    text-align: justify;
+}
+
+/* Document Typography */
+h1, h2, h3, h4, h5, h6 {
+    color: #0f172a;
+    font-weight: 800;
+    margin-top: 2em;
+    margin-bottom: 0.8em;
+}
+
+h1 {
+    font-size: 26pt;
+    border-bottom: 3px solid #e2e8f0;
+    padding-bottom: 12px;
+    color: #0284c7;
+    page-break-before: always;
+}
+
+h2 {
+    font-size: 20pt;
+    color: #1e293b;
+}
+
+h3 {
+    font-size: 16pt;
+}
+
+p {
+    text-align: justify;
+    margin-bottom: 1.2em;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    margin: 30px 0;
+    display: block;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 30px 0;
+    font-size: 10.5pt;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+th, td {
+    padding: 15px 20px;
+    border: 1px solid #e2e8f0;
+}
+
+th {
+    background-color: #0f172a;
+    color: white;
+    font-weight: 600;
+    text-align: left;
+    text-transform: uppercase;
+    font-size: 0.9em;
+    letter-spacing: 1px;
+}
+
+tr:nth-child(even) {
+    background-color: #f8fafc;
+}
+
+code {
+    background-color: #f1f5f9;
+    padding: 3px 6px;
+    border-radius: 4px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.9em;
+    color: #0284c7;
+    font-weight: 600;
+}
+
+pre {
+    background-color: #0f172a;
+    color: #f8fafc;
+    padding: 20px;
+    border-radius: 12px;
+    overflow-x: auto;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+pre code {
+    background-color: transparent;
+    color: inherit;
+    padding: 0;
+    font-weight: 400;
+}
+
+blockquote {
+    border-left: 5px solid #0284c7;
+    background-color: #f0f9ff;
+    padding: 15px 25px;
+    margin: 20px 0;
+    color: #334155;
+    font-style: italic;
+    border-radius: 0 12px 12px 0;
+}
+
+a {
+    color: #0284c7;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+/* TOC Styling */
+#TOC::before {
+    content: "Table of Contents";
+    font-size: 26pt;
+    font-weight: 800;
+    color: #0284c7;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-bottom: 3px solid #e2e8f0;
+    padding-bottom: 15px;
+    display: block;
+    page-break-before: always;
+}
+
+#TOC {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 50px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+}
+
+#TOC > ul {
+    list-style-type: none;
+    padding-left: 0;
+}
+
+#TOC li {
+    margin-bottom: 12px;
+}
+
+#TOC a {
+    color: #1e293b;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+#TOC a:hover {
+    color: #0284c7;
+}
+
+#TOC li ul {
+    padding-left: 25px;
+    margin-top: 8px;
+}
+
+#TOC li ul li a {
+    color: #475569;
+    font-weight: 400;
+    font-size: 0.95em;
+}
+
+/* Fix weird empty elements */
+p:empty {
+    display: none;
+}

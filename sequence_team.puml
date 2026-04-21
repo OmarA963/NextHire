@@ -1,0 +1,32 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+
+title Sequence Diagram (Team)
+
+actor "Team Member" as User
+participant "NextHire UI" as UI
+participant "AI Backend" as AI
+database "Database" as DB
+
+User -> UI: Create Workspace & Assign Roles
+UI -> DB: Save Team Data
+DB --> UI: Success
+
+UI -> AI: Request Project Recommendations
+AI -> AI: Analyze Team Skills
+AI --> UI: Return Recommendations
+UI --> User: Display Projects
+
+User -> UI: Upload Task / Commit Code
+UI -> DB: Save Submission
+UI -> AI: Trigger Task Verification
+AI -> AI: Verify Code & Generate Insights
+AI -> DB: Update Progress
+AI --> UI: Return Verification Results
+UI --> User: Display Results & Badges
+
+AI -> DB: Fetch Weekly Data
+AI -> AI: Generate Documentation & Reports
+AI --> UI: Make Report Available
+@enduml

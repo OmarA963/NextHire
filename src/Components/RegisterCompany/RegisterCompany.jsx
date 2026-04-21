@@ -4,6 +4,7 @@ import Footer from '../Footer/Footer';
 import "../Login/Login.css";
 import "../RegisterEmployee/RegisterEmployee.css";
 import loginImage from "../../assets/0002_1_explore-how-the-fast-paced-digital-revol_41pgg1YCT6WgD7h_l4EPKQ_CBbx0yxyRnirBWGDA1nx3g_cover.jpeg";
+import registerGraphic from '../../assets/ai_register.png'
 import { Link, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from "yup";
@@ -52,6 +53,7 @@ export default function RegisterCompany() {
                 id: newCompany.companyId,
                 email: values.Email,
                 password: values.Password,
+                name: values.Name,
                 role: 'Company'
             });
             localStorage.setItem('users', JSON.stringify(users));
@@ -99,70 +101,87 @@ export default function RegisterCompany() {
     });
 
     return (
-        <div className="container-fluid p-0">
-            <Header />
-            <div className="container-fluid">
-                <div className="hero d-flex justify-content-center align-items-center gap-4">
-                    <div className="image">
-                        <img className='w-100' src={loginImage} alt="login" />
-                    </div>
-                    <div className="info d-flex flex-column align-items-center justify-content-center gap-5">
-                        <div className="inf w-50">
-                            <h3 className='fs-2'>Sign Up As A Company</h3>
-                            {messageError && <div className="alert alert-danger">{messageError}</div>}
-                            <p className='text-start fs-6'>Enter your details below</p>
+            <div className="container-fluid p-0 login-grand-wrapper">
+                <Header />
+                <div className="container-fluid">
+                    <div className="row justify-content-center align-items-center py-5 hero-reg">
+                        <div className="col-lg-6 mb-5 mb-lg-0 text-center d-none d-lg-block">
+                            <div className="login-image-container position-relative w-75 mx-auto">
+                                <div className="glow-effect"></div>
+                                <img className="img-fluid rounded-4 shadow-lg position-relative z-2" src={registerGraphic} alt="Enterprise Registration" />
+                            </div>
                         </div>
-                        <form className='w-100 d-flex flex-column align-items-center justify-content-center'
-                            onSubmit={formik.handleSubmit}>
 
-                            {/* Optional: Debug info */}
-                            {/* <pre>{JSON.stringify(formik.errors, null, 2)}</pre> */}
+                        <div className="col-lg-5">
+                            <div className="login-glass-panel p-5 rounded-4 shadow-lg text-center">
+                                <h1 className="text-white fw-bold mb-2">Enterprise <span className="text-cyan">Onboarding</span></h1>
+                                <p className="text-secondary mb-4">Register your company to access top tier talent.</p>
 
-                            <div className="industry" style={{ border: "none" }}>
-                                <Link className='w-100' to={"/industry"}>Get Your IndustryId</Link>
-                            </div>
-                            {/* Name */}
-                            <input className='input-data m-4' type="text" name="Name" placeholder='Name'
-                                onChange={formik.handleChange} onBlur={formik.handleBlur}
-                                value={formik.values.Name} />
-                            {formik.touched.Name && formik.errors.Name &&
-                                <div className="alert alert-danger w-50">{formik.errors.Name}</div>}
-
-                            <input className='input-data m-4' type="email" name="Email" placeholder='Email'
-                                onChange={formik.handleChange} onBlur={formik.handleBlur}
-                                value={formik.values.Email} />
-                            {formik.touched.Email && formik.errors.Email &&
-                                <div className="alert alert-danger w-50">{formik.errors.Email}</div>}
-
-                            <input className='input-data m-4' type="password" name="Password" placeholder='Password'
-                                autoComplete="current-password"
-                                onChange={formik.handleChange} onBlur={formik.handleBlur}
-                                value={formik.values.Password} />
-                            {formik.touched.Password && formik.errors.Password &&
-                                <div className="alert alert-danger w-50">{formik.errors.Password}</div>}
-
-                            <input className='input-data m-4' type="file" name="image" accept="image/*"
-                                onChange={(event) => formik.setFieldValue("image", event.currentTarget.files[0])} />
-
-                            <input className='input-data m-4' type="text" name="IndustryId" placeholder='Enter Industry UUID'
-                                onChange={formik.handleChange} onBlur={formik.handleBlur}
-                                value={formik.values.IndustryId} />
-                            {formik.touched.IndustryId && formik.errors.IndustryId &&
-                                <div className="alert alert-danger w-50">{formik.errors.IndustryId}</div>}
-
-                            <div className="inf_btn">
-                                {isLoading ? (
-                                    <button className='regist-hero' type='button'>Loading...</button>
-                                ) : (
-                                    <button className='regist-hero' type='submit'>Sign Up</button> // disabled removed
+                                {messageError && (
+                                    <div className="alert alert-danger custom-alert">
+                                        <i className="fa-solid fa-triangle-exclamation me-2"></i>{messageError}
+                                    </div>
                                 )}
-                                <Link id='link-to-register' to={"/register"}>Are you an employee?</Link>
+                                
+                                <form className='w-100 d-flex flex-column align-items-center justify-content-center'
+                                    onSubmit={formik.handleSubmit}>
+
+                                    <div className="industry w-100 mb-3 text-start">
+                                        <Link className='text-cyan text-decoration-none small fw-bold' to={"/industry"}>
+                                            <i className="fa-solid fa-magnifying-glass me-2"></i>Find Your Industry UUID
+                                        </Link>
+                                    </div>
+
+                                    {/* Name */}
+                                    <input className='glass-input w-100 mb-3' type="text" name="Name" placeholder='Company Name'
+                                        onChange={formik.handleChange} onBlur={formik.handleBlur}
+                                        value={formik.values.Name} />
+                                    {formik.touched.Name && formik.errors.Name &&
+                                        <div className="text-danger small mb-2 text-start w-100 ps-2">{formik.errors.Name}</div>}
+
+                                    {/* Email */}
+                                    <input className='glass-input w-100 mb-3' type="email" name="Email" placeholder='Corporate Email'
+                                        onChange={formik.handleChange} onBlur={formik.handleBlur}
+                                        value={formik.values.Email} />
+                                    {formik.touched.Email && formik.errors.Email &&
+                                        <div className="text-danger small mb-2 text-start w-100 ps-2">{formik.errors.Email}</div>}
+
+                                    {/* Password */}
+                                    <input className='glass-input w-100 mb-3' type="password" name="Password" placeholder='Security Key'
+                                        autoComplete="current-password"
+                                        onChange={formik.handleChange} onBlur={formik.handleBlur}
+                                        value={formik.values.Password} />
+                                    {formik.touched.Password && formik.errors.Password &&
+                                        <div className="text-danger small mb-2 text-start w-100 ps-2">{formik.errors.Password}</div>}
+
+                                    {/* Industry ID */}
+                                    <input className='glass-input w-100 mb-4' type="text" name="IndustryId" placeholder='Industry Identifier (UUID)'
+                                        onChange={formik.handleChange} onBlur={formik.handleBlur}
+                                        value={formik.values.IndustryId} />
+                                    {formik.touched.IndustryId && formik.errors.IndustryId &&
+                                        <div className="text-danger small mb-2 text-start w-100 ps-2">{formik.errors.IndustryId}</div>}
+
+                                    {/* Submit Button */}
+                                    <div className="w-100 d-flex flex-column gap-3">
+                                        {isLoading ? (
+                                            <button className='btn btn-purple-glow w-100 py-3 fw-bold' type='button'>
+                                                <i className="fa-solid fa-spinner fa-spin me-2"></i>Verifying...
+                                            </button>
+                                        ) : (
+                                            <button className='btn btn-purple-glow w-100 py-3 fw-bold' type='submit'>
+                                                Establish Enterprise Hub
+                                            </button>
+                                        )}
+                                        <div className="mt-2">
+                                            <Link className="text-secondary text-decoration-none sm-text hover-cyan" to={"/registeremployee"}>Register as a Job Seeker instead <i className="fa-solid fa-arrow-right ms-1"></i></Link>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
                 <Footer />
             </div>
-        </div>
-    );
+        );
 }

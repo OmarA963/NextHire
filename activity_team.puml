@@ -1,0 +1,25 @@
+@startuml
+skinparam monochrome true
+skinparam shadowing false
+
+title Activity Diagram (Team)
+
+start
+:Team Creates Workspace;
+:Assigns Members and Roles;
+:Views AI Project Recommendations;
+
+fork
+    :Uploads Tasks;
+fork again
+    :Commits Code;
+fork again
+    :Updates Progress;
+end fork
+
+:AI Generates Tasks and Assigns based on Skills;
+:AI Verifies Tasks and Updates Progress;
+:Generates Weekly Reports, Documentation, and Dashboards;
+
+stop
+@enduml

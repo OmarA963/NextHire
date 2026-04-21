@@ -3,6 +3,7 @@ import axios from "axios";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
 import "./CVBuilder.css"
+import cvGraphic from "../../assets/ai_design.png";
 import {
   PDFDownloadLink,
   Document,
@@ -15,9 +16,6 @@ import {
 import "bootstrap/dist/css/bootstrap.min.css";
 
 // PDF Styles
-// ... (previous imports)
-
-// PDF Styles - adding certificate specific styles if needed
 const styles = StyleSheet.create({
   page: {
     padding: 30,
@@ -39,13 +37,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   image: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     marginBottom: 10,
   },
   certificateImage: {
-    width: "48%", // Two per row roughly
+    width: "48%",
     height: 200,
     marginBottom: 10,
     objectFit: "contain",
@@ -116,17 +114,11 @@ const MyDocument = ({ data }) => (
         <Text style={styles.subHeading}>Portfolio</Text>
         <Text>{data.portfolio}</Text>
       </View>
-
-      <View style={styles.section}>
-        <Text style={styles.subHeading}>References</Text>
-        <Text>Available upon request.</Text>
-      </View>
     </Page>
 
-    {/* New Page for Certificates */}
     {data.certificateImages && data.certificateImages.length > 0 && (
       <Page size="A4" style={styles.page}>
-        <Text style={styles.heading}>Certificate Attachments</Text>
+        <Text style={styles.heading}>Certificates</Text>
         <View style={styles.certificateContainer}>
           {data.certificateImages.map((img, index) => (
             <Image key={index} src={img} style={styles.certificateImage} />
@@ -154,8 +146,8 @@ const CVBuilder = () => {
     achievements: "",
     portfolio: "",
     photo: "",
-    category: "",
-    certificateImages: [], // New field for array of images
+    category: "IT",
+    certificateImages: [], 
   });
 
   const [submitted, setSubmitted] = useState(false);
@@ -165,17 +157,11 @@ const CVBuilder = () => {
     axios
       .get("https://gist.githubusercontent.com/mohamedshal/fb06b06a9d30c2c75ca1729f1002db0f/raw")
       .then((response) => {
-
-
         if (Array.isArray(response.data.keywords)) {
-          setApiKeywords(response.data.keywords.map(kw => kw.toLowerCase())); // ensure lowercase
-        } else {
-          console.warn("response.data.keywords is not an array");
+          setApiKeywords(response.data.keywords.map(kw => kw.toLowerCase()));
         }
       })
-      .catch((error) => {
-        console.error("Failed to fetch API data:", error);
-      });
+      .catch((error) => console.error("Failed to fetch API data:", error));
   }, []);
 
   const handleChange = (e) => {
@@ -208,10 +194,10 @@ const CVBuilder = () => {
       .catch(err => console.error("Error loading images", err));
   };
 
-
   const handleSubmit = (e) => {
     e.preventDefault();
     setSubmitted(true);
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
   };
 
   const isITCategory = () => {
@@ -222,13 +208,12 @@ const CVBuilder = () => {
     );
   };
 
-
   const inputFields = [
     "name",
     "email",
     "phone",
     "linkedin",
-    ...(isITCategory() ? ["github"] : []), // Only include GitHub if IT
+    ...(isITCategory() ? ["github"] : []),
     "summary",
     "experience",
     "projects",
@@ -240,10 +225,8 @@ const CVBuilder = () => {
     "portfolio",
   ];
 
-  // CV Score Logic
   const calculateScore = () => {
     let score = 0;
-    const totalWeight = 100;
     const fields = [
       { name: 'name', weight: 10 },
       { name: 'email', weight: 10 },
@@ -255,23 +238,18 @@ const CVBuilder = () => {
       { name: 'projects', weight: 10 },
       { name: 'certifications', weight: 5 }
     ];
-
     fields.forEach(field => {
-      if (formData[field.name] && formData[field.name].trim().length > 0) {
-        score += field.weight;
-      }
+      if (formData[field.name] && formData[field.name].trim().length > 0) score += field.weight;
     });
-
     return score;
   };
 
   const getSuggestions = () => {
     const suggestions = [];
-    if (!formData.summary) suggestions.push("Add a professional summary to highlight your goals.");
-    if (!formData.experience) suggestions.push("List your work experience to show your track record.");
-    if (!formData.skills) suggestions.push("Add relevant skills to match job requirements.");
-    if (!formData.projects) suggestions.push("Showcase projects to demonstrate practical knowledge.");
-    if (!formData.certifications && formData.certificateImages.length === 0) suggestions.push("Upload or list certifications to validate your expertise.");
+    if (!formData.summary) suggestions.push("Add a professional summary.");
+    if (!formData.experience) suggestions.push("List your work experience.");
+    if (!formData.skills) suggestions.push("Add relevant skills.");
+    if (!formData.projects) suggestions.push("Showcase projects.");
     return suggestions;
   };
 
@@ -279,207 +257,146 @@ const CVBuilder = () => {
   const cvSuggestions = getSuggestions();
 
   return (
-    <div className="container-fluid p-0">
+    <div className="container-fluid p-0 login-grand-wrapper">
       <Header />
-      <div className="container-fluid">
-        <div className="cvbuilder">
-          <h1 className="mb-4">CV Builder</h1>
-
-          {/* CV Score Dashboard */}
-          <div className="card p-3 mb-4 shadow-sm">
-            <h3>CV Strength: {cvScore}%</h3>
-            <div className="progress mb-3" style={{ height: "25px" }}>
-              <div
-                className={`progress-bar ${cvScore < 50 ? 'bg-danger' : cvScore < 80 ? 'bg-warning' : 'bg-success'}`}
-                role="progressbar"
-                style={{ width: `${cvScore}%` }}
-                aria-valuenow={cvScore}
-                aria-valuemin="0"
-                aria-valuemax="100"
-              >
-                {cvScore}%
-              </div>
-            </div>
-            {cvSuggestions.length > 0 && (
-              <div className="alert alert-light border">
-                <strong>Suggestions to improve:</strong>
-                <ul className="mb-0 mt-2">
-                  {cvSuggestions.map((suggestion, index) => (
-                    <li key={index}>{suggestion}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-
-          <form onSubmit={handleSubmit}>
-            {/* Profile Photo Upload */}
-            <div className="mb-3">
-              <label className="form-label">Profile Photo (optional)</label>
-              <input
-                type="file"
-                accept="image/*"
-                className="form-control"
-                onChange={handleImageUpload}
-              />
-            </div>
-
-            {/* Certificate Upload */}
-            <div className="mb-3">
-              <label className="form-label">Certificate Images (optional)</label>
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                className="form-control"
-                onChange={handleCertificateUpload}
-              />
-              <div className="form-text">You can upload multiple certificate images to verify your experience.</div>
-              {formData.certificateImages.length > 0 && (
-                <div className="mt-2 d-flex gap-2 flex-wrap">
-                  {formData.certificateImages.map((img, idx) => (
-                    <img key={idx} src={img} alt={`Certificate ${idx}`} style={{ width: 50, height: 50, objectFit: 'cover' }} />
-                  ))}
+      <div className="container cv-builder-wrapper">
+        <div className="row g-4 justify-content-center">
+            {/* Header section with graphic */}
+            <div className="col-12 text-center mb-5">
+                <div className="position-relative d-inline-block">
+                    <div className="glow-effect" style={{top:'50%', left:'50%', transform:'translate(-50%, -50%)', width:'150%', height:'150%'}}></div>
+                    <img src={cvGraphic} alt="AI CV" className="img-fluid rounded-4 shadow-lg position-relative z-2" style={{maxWidth: '300px'}} />
                 </div>
-              )}
+                <h1 className="text-white fw-bold mt-4">AI Resume <span className="text-cyan">Architect</span></h1>
+                <p className="text-secondary">Synthesize your professional history into a high-converting profile.</p>
             </div>
 
-            {/* Category Selection */}
-            <div className="mb-3">
-              <label className="form-label">Your Field</label>
-              <div>
-                <div className="form-check form-check-inline">
-                  <input
-                    type="radio"
-                    id="it"
-                    name="category"
-                    value="IT"
-                    checked={formData.category === "IT"}
-                    onChange={handleChange}
-                    className="form-check-input"
-                  />
-                  <label htmlFor="it" className="form-check-label">
-                    IT / Software
-                  </label>
+            {/* Score & Suggestions */}
+            <div className="col-lg-4">
+                <div className="cv-glass-card">
+                    <div className="cv-strength-header">
+                        <h3>Profile Strength</h3>
+                        <span className={`badge ${cvScore > 70 ? 'bg-success' : 'bg-warning'}`}>{cvScore}%</span>
+                    </div>
+                    <div className="cv-progress progress">
+                        <div className="cv-progress-bar progress-bar" style={{ width: `${cvScore}%` }}></div>
+                    </div>
+                    
+                    {cvSuggestions.length > 0 && (
+                        <div className="suggestion-box">
+                            <strong><i className="fa-solid fa-lightbulb me-2"></i>AI Suggestions:</strong>
+                            <ul className="list-unstyled mb-0">
+                                {cvSuggestions.map((s, i) => (
+                                    <li key={i}><i className="fa-solid fa-chevron-right me-2 small"></i>{s}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
                 </div>
-                <div className="form-check form-check-inline">
-                  <input
-                    type="radio"
-                    id="non-it"
-                    name="category"
-                    value="Non-IT"
-                    checked={formData.category === "Non-IT"}
-                    onChange={handleChange}
-                    className="form-check-input"
-                  />
-                  <label htmlFor="non-it" className="form-check-label">
-                    Non-IT
-                  </label>
-                </div>
-              </div>
-            </div>
 
-            {/* Input Fields */}
-            {inputFields.map((field) => (
-              <div className="mb-3" key={field}>
-                <label className="form-label text-capitalize">
-                  {field.replace(/([A-Z])/g, " $1")}
-                </label>
-                {["summary", "experience", "projects", "education", "skills", "certifications", "achievements"].includes(field) ? (
-                  <textarea
-                    className="form-control"
-                    placeholder={`Enter your ${field}`}
-                    name={field}
-                    value={formData[field]}
-                    onChange={handleChange}
-                    required
-                  />
-                ) : (
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder={`Enter your ${field}`}
-                    name={field}
-                    value={formData[field]}
-                    onChange={handleChange}
-                    required
-                  />
-                )}
-              </div>
-            ))}
-
-            <button type="submit" className="btn custom-btn">
-              Generate CV
-            </button>
-          </form>
-
-          {submitted && (
-            <div className="mt-5">
-              <h2 className="mb-3">CV Preview</h2>
-              <div className="card p-3">
-                {formData.photo && (
-                  <div className="mb-4 text-center">
-                    <strong>Profile Photo:</strong>
+                {/* Upload Section */}
+                <div className="cv-glass-card">
+                    <h4 className="text-white mb-4 fs-5">Assets & Proof</h4>
+                    <div className="mb-4">
+                        <label className="field-label">Portrait Photo</label>
+                        <div className="custom-image-upload" onClick={() => document.getElementById('photo-input').click()}>
+                            {formData.photo ? (
+                                <img src={formData.photo} alt="Preview" className="rounded-circle shadow" style={{width:80, height:80, objectFit:'cover'}} />
+                            ) : (
+                                <div className="text-secondary"><i className="fa-solid fa-camera mb-2 fs-3"></i><br/>Upload Portrait</div>
+                            )}
+                            <input id="photo-input" type="file" hidden accept="image/*" onChange={handleImageUpload} />
+                        </div>
+                    </div>
                     <div>
-                      <img
-                        src={formData.photo}
-                        alt="Profile"
-                        style={{
-                          width: "100px",
-                          height: "100px",
-                          borderRadius: "50%",
-                          marginTop: "10px",
-                        }}
-                      />
+                        <label className="field-label">Certifications Export</label>
+                        <div className="custom-image-upload" onClick={() => document.getElementById('cert-input').click()}>
+                            <i className="fa-solid fa-file-shield mb-2 fs-3 text-secondary"></i><br/>
+                            <span className="text-secondary">Select Files</span>
+                            <input id="cert-input" type="file" hidden multiple accept="image/*" onChange={handleCertificateUpload} />
+                        </div>
+                        {formData.certificateImages.length > 0 && (
+                            <div className="mt-3 d-flex gap-2 flex-wrap justify-content-center">
+                                {formData.certificateImages.map((img, idx) => (
+                                    <div key={idx} className="position-relative">
+                                        <img src={img} alt="Cert" style={{ width: 40, height: 40, objectFit: 'cover' }} className="rounded border border-secondary" />
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
-                  </div>
-                )}
-
-                {/* Certificates Preview in HTML */}
-                {formData.certificateImages.length > 0 && (
-                  <div className="mb-4">
-                    <strong>Certificates:</strong>
-                    <div className="d-flex gap-2 flex-wrap mt-2">
-                      {formData.certificateImages.map((img, idx) => (
-                        <img key={idx} src={img} alt="Certificate" style={{ width: 100, height: 75, objectFit: 'cover' }} />
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {inputFields.map((field) => (
-                  <div key={field} className="mb-2">
-                    <strong className="text-capitalize">
-                      {field.replace(/([A-Z])/g, " $1")}:
-                    </strong>
-                    <p>{formData[field]}</p>
-                    <button
-                      className="btn btn-sm custom-btn"
-                      onClick={() => {
-                        const element = document.querySelector(`[name="${field}"]`);
-                        if (element) {
-                          element.scrollIntoView({ behavior: "smooth", block: "center" });
-                          element.focus();
-                        }
-                      }}
-                    >
-                      Edit
-                    </button>
-                  </div>
-                ))}
-              </div>
-
-              <div className="mt-4">
-                <PDFDownloadLink
-                  document={<MyDocument data={formData} />}
-                  fileName={`${formData.name}-CV.pdf`}
-                  className="btn btn-success mt-3"
-                >
-                  {({ loading }) => (loading ? "Preparing document..." : "Download as PDF")}
-                </PDFDownloadLink>
-              </div>
+                </div>
             </div>
-          )}
+
+            {/* Main Form */}
+            <div className="col-lg-7">
+                <div className="cv-glass-card cv-form-section">
+                    <form onSubmit={handleSubmit}>
+                        <div className="mb-4">
+                            <label className="field-label">Primary Discipline</label>
+                            <div className="radio-group p-3 rounded-3 bg-dark bg-opacity-25 border border-white border-opacity-10">
+                                <div className="form-check radio-item">
+                                    <input className="form-check-input" type="radio" name="category" id="it" value="IT" checked={formData.category === "IT"} onChange={handleChange}/>
+                                    <label className="form-check-label" htmlFor="it">Software Engineering</label>
+                                </div>
+                                <div className="form-check radio-item">
+                                    <input className="form-check-input" type="radio" name="category" id="non-it" value="Non-IT" checked={formData.category === "Non-IT"} onChange={handleChange}/>
+                                    <label className="form-check-label" htmlFor="non-it">Other Industry</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="row">
+                            {inputFields.map((field) => (
+                                <div className={["summary", "experience", "projects", "education", "skills", "certifications", "achievements"].includes(field) ? "col-12 mb-4" : "col-md-6 mb-4"} key={field}>
+                                    <label className="field-label">{field.replace(/([A-Z])/g, " $1")}</label>
+                                    {["summary", "experience", "projects", "education", "skills", "certifications", "achievements"].includes(field) ? (
+                                        <textarea className="glass-input w-100" rows="4" placeholder={`Describe your ${field}...`} name={field} value={formData[field]} onChange={handleChange} required />
+                                    ) : (
+                                        <input type={field === 'email' ? 'email' : 'text'} className="glass-input w-100" placeholder={`Enter ${field}`} name={field} value={formData[field]} onChange={handleChange} required />
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+
+                        <button type="submit" className="btn btn-cyan-glow w-100 py-3 fw-bold mt-2">
+                            <i className="fa-solid fa-wand-sparkles me-2"></i>Synthesize Resume
+                        </button>
+                    </form>
+                </div>
+
+                {/* Preview & Download */}
+                {submitted && (
+                    <div className="cv-glass-card mt-4 p-4">
+                        <div className="d-flex justify-content-between align-items-center mb-4">
+                            <h2 className="text-white m-0 fs-4">Review Matrix</h2>
+                            <PDFDownloadLink
+                                document={<MyDocument data={formData} />}
+                                fileName={`${formData.name}-CV.pdf`}
+                                className="btn btn-purple-glow btn-sm"
+                            >
+                                {({ loading }) => (loading ? "Encrypting..." : <><i className="fa-solid fa-download me-2"></i>Download PDF</>)}
+                            </PDFDownloadLink>
+                        </div>
+                        
+                        <div className="cv-preview-card">
+                            <div className="row">
+                                {inputFields.map((field) => (
+                                    <div key={field} className={["summary", "experience", "projects", "education", "skills", "certifications", "achievements"].includes(field) ? "col-12 mb-3" : "col-md-6 mb-3"}>
+                                        <strong>{field}:</strong>
+                                        <p className="mb-1">{formData[field] || <span className="text-muted italic">NULL</span>}</p>
+                                        <button className="edit-btn" onClick={() => {
+                                            const el = document.querySelector(`[name="${field}"]`);
+                                            el?.scrollIntoView({ behavior: "smooth", block: "center" });
+                                            el?.focus();
+                                        }}><i className="fa-solid fa-pen-to-square me-1"></i>Edit Data</button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
         <Footer />
       </div>

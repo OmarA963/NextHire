@@ -1,18 +1,31 @@
+.all-jobs-container {
+    min-height: 100vh;
+}
+
 .all-jobs {
-    background-color: #f2f6ff !important;
-    padding: 20px;
-    width: calc(100% + 4px);
-    transform: translateX(-2px);
+    background-color: transparent !important;
+    position: relative;
 }
-.hide {
-    display: none !important;
+
+.shadow-glow {
+    filter: drop-shadow(0 0 15px var(--neon-cyan));
 }
-.show {
-    display: block !important;
+
+.animate-in {
+    animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
-.all-jobs .thespinner {
-    margin: 10px 0;
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
-.all-jobs .thespinner  svg{
-    font-size: 30px;
-}
+
+.tracking-widest {
+    letter-spacing: 0.2rem;
+}

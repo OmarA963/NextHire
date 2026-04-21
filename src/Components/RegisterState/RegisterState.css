@@ -1,10 +1,17 @@
-.stateRegis {
-    width: 20%;
-    text-align: center;
-    overflow: hidden;
+.hero-reg {
+    background-color: transparent !important;
+    min-height: 80vh;
 }
-@media (max-width:992px) {
-    .stateRegis {
-        width: 100%;
-    }
+
+.btn-purple-glow {
+    background: transparent;
+    border: 1px solid var(--neon-purple);
+    color: var(--neon-purple);
+    transition: all 0.3s ease;
+}
+
+.btn-purple-glow:hover {
+    background: rgba(176, 38, 255, 0.1);
+    color: #fff;
+    box-shadow: 0 0 15px rgba(176, 38, 255, 0.4);
 }

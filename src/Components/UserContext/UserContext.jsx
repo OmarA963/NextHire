@@ -1,10 +1,12 @@
 import React, { useState, createContext, useEffect } from 'react'
 import { jwtDecode } from 'jwt-decode'
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 
 export const TheUserContext = createContext();
 
 export function UserContextProvider({ children }) {
+  const navigate = useNavigate();
   const [userData, setUserData] = useState(null);
   const [companyId, setCompanyId] = useState(null);
   const [compImage, setCompImage] = useState(null);
@@ -12,7 +14,7 @@ export function UserContextProvider({ children }) {
   const [isJobsLoading, setIsJobsLoading] = useState(true);
   const [jobsError, setJobsError] = useState('');
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState(null); // ✅ تمت الإضافة هنا
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [likedJobs, setLikedJobs] = useState([]);
 
   const toggleLikeJob = (job) => {
@@ -28,8 +30,14 @@ export function UserContextProvider({ children }) {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    const searchInput = e.target.elements.search.value.trim();
+    const searchInput = e.target.elements.search?.value.trim() || "";
     setSearchQuery(searchInput);
+    navigate("/alljobs");
+  };
+
+  const handlePillClick = (term) => {
+    setSearchQuery(term);
+    navigate("/alljobs");
   };
 
   const filterByCategory = (jobs, category) => {
@@ -120,6 +128,16 @@ export function UserContextProvider({ children }) {
     fetchJobs();
   }, []);
 
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("companyId");
+    localStorage.removeItem("employeeId");
+    localStorage.removeItem("company-id");
+    setUserData(null);
+    setCompanyId(null);
+  };
+
   return (
     <TheUserContext.Provider
       value={{
@@ -138,10 +156,12 @@ export function UserContextProvider({ children }) {
         setSearchQuery,
         handleSearch,
         filterByCategory,
-        selectedCategory,          // ✅ الإتاحة داخل الـ context
+        selectedCategory,
         setSelectedCategory,
         likedJobs,
-        toggleLikeJob
+        toggleLikeJob,
+        logout,
+        handlePillClick
       }}
     >
       {children}

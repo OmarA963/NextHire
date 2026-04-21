@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
 import './CareerRoadmap.css';
+import roadmapGraphic from '../../assets/ai_management.png';
 
 const ROADMAP_TEMPLATES = {
     "frontend": [
@@ -37,7 +38,6 @@ export default function CareerRoadmap() {
         if (!goal) return;
 
         setLoading(true);
-        // MOCK AI LOGIC
         setTimeout(() => {
             const lowerGoal = goal.toLowerCase();
             let result = null;
@@ -46,7 +46,6 @@ export default function CareerRoadmap() {
             else if (lowerGoal.includes("back")) result = ROADMAP_TEMPLATES.backend;
             else if (lowerGoal.includes("full")) result = ROADMAP_TEMPLATES.fullstack;
             else {
-                // Generative fallback
                 result = [
                     { title: "Core Basics", desc: `Learn the fundamentals related to ${goal}.`, icon: "fa-graduation-cap" },
                     { title: "Intermediate Skills", desc: `Advance your knowledge in ${goal} specializations.`, icon: "fa-book" },
@@ -62,32 +61,40 @@ export default function CareerRoadmap() {
     };
 
     return (
-        <div className="container-fluid p-0">
+        <div className="container-fluid p-0 login-grand-wrapper">
             <Header />
-            <div className="container-fluid career-roadmap">
+            <div className="container career-roadmap">
                 <div className="roadmap-container">
-                    <h1 className="text-center mb-5">AI Career Roadmap Generator</h1>
+                    <div className="text-center mb-5">
+                        <div className="position-relative d-inline-block mb-4">
+                            <div className="glow-effect" style={{top:'50%', left:'50%', transform:'translate(-50%, -50%)', width:'150%', height:'150%'}}></div>
+                            <img src={roadmapGraphic} alt="AI Roadmap" className="img-fluid rounded-4 shadow-lg position-relative z-2" style={{maxWidth: '280px'}} />
+                        </div>
+                        <h1 className="text-white fw-bold">Trajectory <span className="text-cyan">Architect</span></h1>
+                        <p className="text-secondary">Synthesize a comprehensive roadmap based on your professional aspirations.</p>
+                    </div>
 
                     <div className="roadmap-input-card text-center">
-                        <h3>Where do you want to be?</h3>
-                        <p className="text-muted">Enter your dream job title and we'll map out your journey.</p>
-                        <form onSubmit={generateRoadmap} className="d-flex gap-2 mt-4 justify-content-center">
+                        <h3 className="text-white mb-3">Target Objective</h3>
+                        <p className="text-secondary mb-4">Define your career vector to initialize path synthesis.</p>
+                        <form onSubmit={generateRoadmap} className="d-flex flex-column flex-md-row gap-3 justify-content-center align-items-center">
                             <input
                                 type="text"
-                                className="form-control w-50"
-                                placeholder="e.g. Frontend Developer"
+                                className="glass-input flex-grow-1"
+                                placeholder="e.g. Senior Software Architect"
                                 value={goal}
                                 onChange={(e) => setGoal(e.target.value)}
+                                style={{maxWidth: '400px'}}
                             />
-                            <button className="btn custom-btn" type="submit" disabled={loading}>
-                                {loading ? "Analyzing..." : "Generate Roadmap"}
+                            <button className="btn btn-cyan-glow py-3 px-5 fw-bold" type="submit" disabled={loading}>
+                                {loading ? <><i className="fa-solid fa-spinner fa-spin me-2"></i>Analyzing...</> : "Synthesize Path"}
                             </button>
                         </form>
                     </div>
 
                     {roadmap && (
-                        <div className="timeline-section mt-5">
-                            <h2 className="text-center mb-5">Your Path to <span className="text-primary text-capitalize">{goal}</span></h2>
+                        <div className="timeline-section mt-5 animate-in">
+                            <h2 className="text-center text-white mb-5">Deployment Log: <span className="text-cyan text-capitalize">{goal}</span></h2>
                             <div className="timeline">
                                 {roadmap.map((step, index) => (
                                     <div key={index} className={`timeline-item ${index % 2 === 0 ? 'left' : 'right'}`}>
@@ -97,15 +104,15 @@ export default function CareerRoadmap() {
                                                 <i className={`fa-solid ${step.icon}`}></i>
                                             </div>
                                             <h4>{step.title}</h4>
-                                            <p className="text-muted mb-0">{step.desc}</p>
+                                            <p className="mb-0">{step.desc}</p>
                                         </div>
                                     </div>
                                 ))}
                             </div>
 
                             <div className="text-center mt-5">
-                                <button className="btn btn-outline-primary" onClick={() => setRoadmap(null)}>
-                                    Generate New Roadmap
+                                <button className="btn btn-purple-glow px-5 py-3" onClick={() => setRoadmap(null)}>
+                                    Reset Trajectory
                                 </button>
                             </div>
                         </div>
@@ -116,3 +123,4 @@ export default function CareerRoadmap() {
         </div>
     );
 }
+

@@ -3,7 +3,7 @@ import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
 import "../Login/Login.css";
 import "./RegisterEmployee.css";
-import loginImage from "../../assets/0002_1_explore-how-the-fast-paced-digital-revol_41pgg1YCT6WgD7h_l4EPKQ_CBbx0yxyRnirBWGDA1nx3g_cover.jpeg";
+import loginImage from "../../assets/ai_register.png";
 import { Link, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from "yup";
@@ -198,149 +198,162 @@ export default function RegisterEmployee() {
     });
 
     return (
-        <div className="container-fluid p-0">
-            <Header />
-            <div className="container-fluid">
-                <div className="hero d-flex justify-content-center align-items-center gap-4">
-                    <div className="image">
-                        <img className='w-100' src={loginImage} alt="login" />
-                    </div>
-                    <div className="info d-flex flex-column align-items-center justify-content-center gap-5">
-                        <div className="inf w-50">
-                            <h3 className='fs-2'>Sign Up As An Employee</h3>
-                            {messageError && (
-                                <div className="alert alert-danger">
-                                    {messageError}
-                                </div>
-                            )}
-                            <p className='text-start fs-6'>Enter your details below</p>
+            <div className="container-fluid p-0 login-grand-wrapper">
+                <Header />
+                <div className="container-fluid">
+                    <div className="row justify-content-center align-items-center py-5 hero-reg">
+                        <div className="col-lg-6 mb-5 mb-lg-0 text-center d-none d-lg-block">
+                            <div className="login-image-container position-relative w-75 mx-auto">
+                                <div className="glow-effect"></div>
+                                <img className="img-fluid rounded-4 shadow-lg position-relative z-2" src={loginImage} alt="Talent Onboarding" />
+                            </div>
                         </div>
-                        <form
-                            className='w-100 d-flex flex-column align-items-center justify-content-center'
-                            onSubmit={formik.handleSubmit}
-                        >
-                            {/* FullName */}
-                            <input
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                className='input-data m-4'
-                                type="text"
-                                name="FullName"
-                                id="FullName"
-                                value={formik.values.FullName}
-                                placeholder='FullName'
-                            />
-                            {formik.errors.FullName && formik.touched.FullName && (
-                                <div className="alert alert-danger w-50">
-                                    {String(formik.errors.FullName)}
-                                </div>
-                            )}
 
-                            {/* Email */}
-                            <input
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                className='input-data m-4'
-                                type="email"
-                                name="Email"
-                                id="Email"
-                                value={formik.values.Email}
-                                placeholder='Enter your Email'
-                            />
-                            {formik.errors.Email && formik.touched.Email && (
-                                <div className="alert alert-danger w-50">
-                                    {String(formik.errors.Email)}
-                                </div>
-                            )}
+                        <div className="col-lg-5">
+                            <div className="login-glass-panel p-5 rounded-4 shadow-lg text-center">
+                                <h1 className="text-white fw-bold mb-2">Talent <span className="text-cyan">Onboarding</span></h1>
+                                <p className="text-secondary mb-4">Initialize your NextHire candidate profile</p>
 
-                            {/* Password */}
-                            <input
-                                autoComplete="current-password"
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                className='input-data m-4'
-                                type="password"
-                                name="Password"
-                                id="Password"
-                                value={formik.values.Password}
-                                placeholder='Password'
-                            />
-                            {formik.errors.Password && formik.touched.Password && (
-                                <div className="alert alert-danger w-50">
-                                    {String(formik.errors.Password)}
-                                </div>
-                            )}
-
-                            {/* Image Upload / Face Capture */}
-                            <div className="d-flex flex-column align-items-center mb-3">
-                                <label className="mb-2">Face Verification (Required)</label>
-                                {!capturedImage ? (
-                                    <>
-                                        {showWebcam ? (
-                                            <div className="webcam-container mb-3" style={{ border: '2px solid #ccc' }}>
-                                                {isModelsLoaded ? (
-                                                    <>
-                                                        <Webcam
-                                                            audio={false}
-                                                            ref={webcamRef}
-                                                            screenshotFormat="image/jpeg"
-                                                            width={320}
-                                                            height={240}
-                                                        />
-                                                        <button type="button" className="btn btn-primary mt-2 w-100" onClick={capture}>Capture & Verify</button>
-                                                    </>
-                                                ) : (
-                                                    <p>Loading Face Recognition Models...</p>
-                                                )}
-                                            </div>
-                                        ) : (
-                                            <button type="button" className="btn btn-outline-primary mb-3" onClick={() => setShowWebcam(true)}>
-                                                Check Camera & Verify Face
-                                            </button>
-                                        )}
-                                    </>
-                                ) : (
-                                    <div className="mb-3 text-center">
-                                        <img src={capturedImage} alt="Captured Face" width="100" height="100" style={{ borderRadius: '50%', objectFit: 'cover' }} />
-                                        <p className="text-success mt-1">Face Verified!</p>
-                                        <button type="button" className="btn btn-sm btn-outline-danger" onClick={() => { setCapturedImage(null); setIsFaceUnique(false); setShowWebcam(true); }}>Retake</button>
+                                {messageError && (
+                                    <div className="alert alert-danger custom-alert">
+                                        <i className="fa-solid fa-triangle-exclamation me-2"></i>{messageError}
                                     </div>
                                 )}
+                                
+                                <form
+                                    className='w-100 d-flex flex-column align-items-center justify-content-center'
+                                    onSubmit={formik.handleSubmit}
+                                >
+                                    {/* FullName */}
+                                    <input
+                                        onBlur={formik.handleBlur}
+                                        onChange={formik.handleChange}
+                                        className='glass-input w-100 mb-3'
+                                        type="text"
+                                        name="FullName"
+                                        id="FullName"
+                                        value={formik.values.FullName}
+                                        placeholder='Full Name'
+                                    />
+                                    {formik.errors.FullName && formik.touched.FullName && (
+                                        <div className="text-danger small mb-2 text-start w-100 ps-2">
+                                            {String(formik.errors.FullName)}
+                                        </div>
+                                    )}
 
-                                <input
-                                    className='d-none' // Hide the original file input as we use webcam
-                                    onChange={(event) => {
-                                        formik.setFieldValue("image", event.currentTarget.files[0]);
-                                    }}
-                                    type="file"
-                                    id="image"
-                                    name="image"
-                                    accept="image/*"
-                                />
-                            </div>
+                                    {/* Email */}
+                                    <input
+                                        onBlur={formik.handleBlur}
+                                        onChange={formik.handleChange}
+                                        className='glass-input w-100 mb-3'
+                                        type="email"
+                                        name="Email"
+                                        id="Email"
+                                        value={formik.values.Email}
+                                        placeholder='System Email'
+                                    />
+                                    {formik.errors.Email && formik.touched.Email && (
+                                        <div className="text-danger small mb-2 text-start w-100 ps-2">
+                                            {String(formik.errors.Email)}
+                                        </div>
+                                    )}
 
-                            {/* Submit Button */}
-                            <div className="inf_btn">
-                                {isLoading ? (
-                                    <button className='regist-hero' type='button'>
-                                        <div>Loading...</div>
-                                    </button>
-                                ) : (
-                                    <button
-                                        disabled={!(formik.isValid && formik.dirty && isFaceUnique)}
-                                        className='regist-hero'
-                                        type='submit'
-                                    >
-                                        Sign Up
-                                    </button>
-                                )}
-                                <Link id='link-to-register' to={"/register"}>Are you a company?</Link>
+                                    {/* Password */}
+                                    <input
+                                        autoComplete="current-password"
+                                        onBlur={formik.handleBlur}
+                                        onChange={formik.handleChange}
+                                        className='glass-input w-100 mb-3'
+                                        type="password"
+                                        name="Password"
+                                        id="Password"
+                                        value={formik.values.Password}
+                                        placeholder='Security Key'
+                                    />
+                                    {formik.errors.Password && formik.touched.Password && (
+                                        <div className="text-danger small mb-2 text-start w-100 ps-2">
+                                            {String(formik.errors.Password)}
+                                        </div>
+                                    )}
+
+                                    {/* Image Upload / Face Capture */}
+                                    <div className="w-100 mb-4 p-3 biometric-capture-zone rounded-3">
+                                        <label className="mb-2 text-cyan fw-bold d-block text-start"><i className="fa-solid fa-expand me-2"></i>Biometric Handshake (Required)</label>
+                                        {!capturedImage ? (
+                                            <>
+                                                {showWebcam ? (
+                                                    <div className="webcam-container mb-3 position-relative overflow-hidden rounded-3 border-cyan" style={{ border: '2px solid rgba(0, 240, 255, 0.4)' }}>
+                                                        {isModelsLoaded ? (
+                                                            <>
+                                                                <Webcam
+                                                                    audio={false}
+                                                                    ref={webcamRef}
+                                                                    screenshotFormat="image/jpeg"
+                                                                    width="100%"
+                                                                    height={200}
+                                                                    className="webcam-feed"
+                                                                />
+                                                                <button type="button" className="btn btn-cyan-glow mt-2 w-100 py-2 rounded-bottom-3" onClick={capture}>Capture & Verify Identity</button>
+                                                            </>
+                                                        ) : (
+                                                            <div className="p-4 text-cyan">
+                                                                <i className="fa-solid fa-spinner fa-spin me-2"></i>Loading AI Matrix...
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                ) : (
+                                                    <button type="button" className="btn btn-cyan-glow w-100 py-2 d-flex align-items-center justify-content-center" onClick={() => setShowWebcam(true)}>
+                                                        <i className="fa-solid fa-camera-viewfinder me-2 fs-5"></i> Initialize Scanner
+                                                    </button>
+                                                )}
+                                            </>
+                                        ) : (
+                                            <div className="mb-3 text-center d-flex align-items-center justify-content-between bg-dark p-2 rounded-3 border border-success">
+                                                <div className="d-flex align-items-center">
+                                                    <img src={capturedImage} alt="Captured Face" width="40" height="40" style={{ borderRadius: '50%', objectFit: 'cover' }} className="me-3" />
+                                                    <span className="text-success fw-bold"><i className="fa-solid fa-circle-check me-2"></i>Verified</span>
+                                                </div>
+                                                <button type="button" className="btn btn-sm btn-outline-danger" onClick={() => { setCapturedImage(null); setIsFaceUnique(false); setShowWebcam(true); }}>Reset</button>
+                                            </div>
+                                        )}
+
+                                        <input
+                                            className='d-none' // Hide the original file input as we use webcam
+                                            onChange={(event) => {
+                                                formik.setFieldValue("image", event.currentTarget.files[0]);
+                                            }}
+                                            type="file"
+                                            id="image"
+                                            name="image"
+                                            accept="image/*"
+                                        />
+                                    </div>
+
+                                    {/* Submit Button */}
+                                    <div className="w-100 d-flex flex-column gap-3">
+                                        {isLoading ? (
+                                            <button className='btn btn-cyan-glow w-100 py-3 fw-bold' type='button'>
+                                                <i className="fa-solid fa-spinner fa-spin me-2"></i>Processing...
+                                            </button>
+                                        ) : (
+                                            <button
+                                                disabled={!(formik.isValid && formik.dirty && isFaceUnique)}
+                                                className='btn btn-cyan-glow w-100 py-3 fw-bold'
+                                                type='submit'
+                                            >
+                                                Initialize Profile
+                                            </button>
+                                        )}
+                                        <div className="mt-3">
+                                            <Link className="text-secondary text-decoration-none sm-text hover-cyan" to={"/registeremployer"}>Or register as an Enterprise <i className="fa-solid fa-arrow-right ms-1"></i></Link>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
                 <Footer />
             </div>
-        </div>
-    );
+        );
 }

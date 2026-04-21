@@ -1,5 +1,5 @@
 import { Route, Routes } from 'react-router-dom'
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import './App.css'
 import Home from './Components/Home/Home'
 import About from "./Components/About/About"
@@ -24,11 +24,27 @@ import ResumeMatcher from './Components/ResumeMatcher/ResumeMatcher'
 import CoverLetterArchitect from './Components/CoverLetterArchitect/CoverLetterArchitect'
 import PivotPredictor from './Components/PivotPredictor/PivotPredictor'
 import OfferWeightCalculator from './Components/OfferWeightCalculator/OfferWeightCalculator'
+import AIChatWidget from './Components/AIChatWidget/AIChatWidget'
+import LoadingScreen from './Components/LoadingScreen/LoadingScreen'
+import ParticleCanvas from './Components/ParticleCanvas/ParticleCanvas'
+import SavedJobs from './Components/SavedJobs/SavedJobs'
+import ApplicationTracker from './Components/ApplicationTracker/ApplicationTracker'
 
 function App() {
   const { userData } = useContext(TheUserContext);
+  const [loading, setLoading] = useState(!sessionStorage.getItem("booted"));
+
+  const handleLoadComplete = () => {
+    sessionStorage.setItem("booted", "true");
+    setLoading(false);
+  };
+
+  if (loading) return <LoadingScreen onComplete={handleLoadComplete} />;
+
   return (
     <>
+      <ParticleCanvas />
+      <AIChatWidget />
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/alljobs' element={<ProtectedRoute userData={userData}><AllJobs /></ProtectedRoute>} />
@@ -49,6 +65,8 @@ function App() {
         <Route path='/cover-letter' element={<ProtectedRoute userData={userData}><CoverLetterArchitect /></ProtectedRoute>} />
         <Route path='/pivot-predictor' element={<ProtectedRoute userData={userData}><PivotPredictor /></ProtectedRoute>} />
         <Route path='/offer-calculator' element={<ProtectedRoute userData={userData}><OfferWeightCalculator /></ProtectedRoute>} />
+        <Route path='/saved-jobs' element={<ProtectedRoute userData={userData}><SavedJobs /></ProtectedRoute>} />
+        <Route path='/my-applications' element={<ProtectedRoute userData={userData}><ApplicationTracker /></ProtectedRoute>} />
         <Route path='/*' element={<NotFound />} />
         <Route path='/jobdetails' element={<ProtectedRoute userData={userData}><JobDetails /></ProtectedRoute>} />
       </Routes>

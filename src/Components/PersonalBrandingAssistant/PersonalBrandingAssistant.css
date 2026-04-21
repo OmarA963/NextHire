@@ -1,112 +1,89 @@
 .personal-branding {
     padding: 60px 0;
-    min-height: 100vh;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    min-height: 85vh;
+    background-color: transparent !important;
 }
 
 .branding-container {
-    max-width: 900px;
+    max-width: 1000px;
     margin: 0 auto;
 }
 
 .branding-input-card {
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(10px);
+    background: rgba(10, 15, 30, 0.4);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 240, 255, 0.1);
     border-radius: 20px;
-    padding: 40px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    margin-bottom: 40px;
-    animation: fadeIn 0.8s ease-out;
+    padding: 3rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    margin-bottom: 4rem;
 }
 
 .result-card {
-    background: white;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 20px;
-    padding: 30px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-    margin-top: 30px;
-    animation: slideUp 0.6s ease-out;
+    padding: 40px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    margin-top: 40px;
 }
 
 .suggestion-box {
-    border-left: 4px solid var(--primary-color, #0d6efd);
-    padding-left: 20px;
+    border-left: 4px solid var(--neon-cyan);
+    padding: 25px;
     margin-bottom: 25px;
-    transition: transform 0.3s ease;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 0 15px 15px 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .suggestion-box:hover {
-    transform: translateX(5px);
+    transform: translateX(10px);
+    background: rgba(0, 240, 255, 0.05);
+    border-color: var(--neon-purple);
 }
 
 .tag {
-    font-size: 0.8rem;
-    padding: 4px 12px;
-    border-radius: 50px;
+    font-size: 0.75rem;
+    padding: 4px 14px;
+    border-radius: 100px;
     text-transform: uppercase;
-    font-weight: 600;
-    margin-bottom: 10px;
+    font-weight: 700;
+    margin-bottom: 12px;
     display: inline-block;
+    letter-spacing: 1px;
 }
 
 .tag-professional {
-    background: #e7f1ff;
-    color: #0d6efd;
+    background: rgba(13, 110, 253, 0.1);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.2);
 }
 
 .tag-creative {
-    background: #f0fdf4;
-    color: #198754;
+    background: rgba(168, 85, 247, 0.1);
+    color: #a855f7;
+    border: 1px solid rgba(168, 85, 247, 0.2);
 }
 
 .tag-minimalist {
-    background: #f8f9fa;
-    color: #6c757d;
+    background: rgba(20, 184, 166, 0.1);
+    color: #14b8a6;
+    border: 1px solid rgba(20, 184, 166, 0.2);
 }
 
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-
-    to {
-        opacity: 1;
-    }
+.copy-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
+    font-size: 0.8rem;
+    transition: all 0.2s ease;
 }
 
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.improve-btn {
-    padding: 12px 30px;
-    border-radius: 12px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-.improve-btn:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
-}
-
-textarea.form-control {
-    border-radius: 12px;
-    padding: 15px;
-    border: 2px solid #eee;
-    transition: border-color 0.3s ease;
-}
-
-textarea.form-control:focus {
-    border-color: var(--primary-color, #0d6efd);
-    box-shadow: none;
+.copy-btn:hover {
+    background: var(--neon-cyan-transparent);
+    color: white;
+    border-color: var(--neon-cyan);
 }

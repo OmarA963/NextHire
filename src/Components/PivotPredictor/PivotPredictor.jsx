@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
 import "./PivotPredictor.css";
+import predictGraphic from "../../assets/ai_tech.png";
 
 export default function PivotPredictor() {
     const [skills, setSkills] = useState("");
@@ -11,7 +12,6 @@ export default function PivotPredictor() {
     const analyzeFuture = () => {
         setIsAnalyzing(true);
 
-        // Simulated AI Strategic Analysis
         setTimeout(() => {
             const skillList = skills.toLowerCase().split(',').map(s => s.trim());
 
@@ -49,13 +49,14 @@ export default function PivotPredictor() {
                 timeline: timelineSteps.length > 0 ? timelineSteps : [{ skill: 'General', text: 'Market shifting towards AI integration across all stacks.' }],
                 pivots: pivotActions.length > 0 ? pivotActions : [{ skill: 'Core', action: 'Move towards AI Management and Strategy.' }],
                 verdict: score > 60
-                    ? "Warning: Your current stack is highly vulnerable to AI automation. Strategic pivot recommended."
+                    ? "Critical Alert: Your current technical stack is highly vulnerable to rapid AI automation within this cycle."
                     : score > 30
-                        ? "Good standing. Your core logic skills are safe, but boilerplate tasks are shifting. Augment with AI tools."
-                        : "Elite Path. Your skills are in the 'Safe Zone' of high-complexity computing."
+                        ? "Stable integration: Your core algorithmic logic remains valuable, though boilerplate efficiency is being consumed by neural tools."
+                        : "Elite Singularity: Your current specializations are within the high-complexity 'Safe Zone' of non-trivial computing."
             });
 
             setIsAnalyzing(false);
+            window.scrollTo({ top: 600, behavior: 'smooth' });
         }, 2000);
     };
 
@@ -66,108 +67,109 @@ export default function PivotPredictor() {
     };
 
     return (
-        <div className="container-fluid p-0 predictor-container">
+        <div className="container-fluid p-0 login-grand-wrapper">
             <Header />
-            <div className="container mt-5">
-                <div className="row justify-content-center">
-                    <div className="col-lg-10">
-                        <div className="predictor-card">
-                            <div className="text-center mb-5">
-                                <h1 className="display-5 fw-extrabold glow-text">Future-Proof Pivot Predictor 🔮</h1>
-                                <p className="text-muted lead">The AI "Career Bodyguard" analyzing your path for the next 5 years.</p>
+            <div className="container predictor-container">
+                <div className="predictor-card">
+                    <div className="text-center mb-5">
+                        <div className="position-relative d-inline-block mb-4">
+                            <div className="glow-effect" style={{top:'50%', left:'50%', transform:'translate(-50%, -50%)', width:'150%', height:'150%'}}></div>
+                            <img src={predictGraphic} alt="AI Predictor" className="img-fluid rounded-4 shadow-lg position-relative z-2" style={{maxWidth: '280px'}} />
+                        </div>
+                        <h1 className="text-white fw-bold">Neural <span className="text-cyan">Oracle</span></h1>
+                        <p className="text-secondary">Projecting technical obsolescence and strategic pivot vectors for the next fiscal cycle.</p>
+                    </div>
+
+                    {!result ? (
+                        <div className="skill-input-card text-center py-5">
+                            <h3 className="text-white mb-3">Skillset Quantification</h3>
+                            <p className="text-secondary mb-4">Initialize scanning of your core competencies (e.g. React, Python, SQL).</p>
+                            <div className="row justify-content-center">
+                                <div className="col-md-9">
+                                    <input
+                                        className="glass-input w-100 mb-4 text-center fs-5"
+                                        placeholder="React, Distributed Systems, Python..."
+                                        value={skills}
+                                        onChange={(e) => setSkills(e.target.value)}
+                                    />
+                                    <button
+                                        className="btn btn-cyan-glow px-5 py-3 fw-bold"
+                                        onClick={analyzeFuture}
+                                        disabled={isAnalyzing || !skills}
+                                    >
+                                        {isAnalyzing ? (
+                                            <><i className="fa-solid fa-spinner fa-spin me-2"></i>Initiating Market Matrix Scan...</>
+                                        ) : "Execute Predictive Analysis"}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="analysis-results animate-in">
+                            <div className="row g-4 align-items-center">
+                                <div className="col-md-4 text-center">
+                                    <div className="gauge-container">
+                                        <div className="gauge-ring"></div>
+                                        <div
+                                            className="gauge-fill"
+                                            style={{ transform: `rotate(${result.longevity * 1.8}deg)` }}
+                                        ></div>
+                                        <div className="gauge-value">{result.longevity}%</div>
+                                    </div>
+                                    <h5 className="text-secondary mt-3">Longevity Coefficient</h5>
+                                    <span className={`risk-tag ${getRiskClass(result.riskLevel)}`}>
+                                        {result.riskLevel} Persistence
+                                    </span>
+                                </div>
+                                <div className="col-md-8">
+                                    <div className="analysis-verdict">
+                                        <h4 className="text-cyan mb-3"><i className="fa-solid fa-microchip me-2"></i>Neural Strategic Verdict</h4>
+                                        <p className="text-white fs-5 opacity-90">{result.verdict}</p>
+                                    </div>
+                                </div>
                             </div>
 
-                            {!result ? (
-                                <div className="skill-input-card text-center py-5">
-                                    <h3>What's in your toolbox?</h3>
-                                    <p className="text-secondary mb-4">Enter your core skills (e.g., React, Python, SQL) for a 5-year risk assessment.</p>
-                                    <div className="row justify-content-center">
-                                        <div className="col-md-8">
-                                            <input
-                                                className="form-control future-textarea mb-4 text-center"
-                                                placeholder="React, CSS, Node.js, Python..."
-                                                value={skills}
-                                                onChange={(e) => setSkills(e.target.value)}
-                                            />
-                                            <button
-                                                className="btn btn-predict px-5"
-                                                onClick={analyzeFuture}
-                                                disabled={isAnalyzing || !skills}
-                                            >
-                                                {isAnalyzing ? (
-                                                    <><span className="spinner-border spinner-border-sm me-2"></span>Initiating Market Scan...</>
-                                                ) : "Run Strategy Analysis"}
-                                            </button>
-                                        </div>
+                            <div className="row mt-5 g-4">
+                                <div className="col-lg-6">
+                                    <h4 className="text-white mb-4"><i className="fa-solid fa-hourglass-half text-cyan me-2"></i> Obsolescence Log</h4>
+                                    <div className="timeline-container ps-3">
+                                        {result.timeline.map((item, i) => (
+                                            <div key={i} className="timeline-step">
+                                                <strong className="text-capitalize">{item.skill} Vector</strong>
+                                                <span>{item.text}</span>
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
-                            ) : (
-                                <div className="analysis-results">
-                                    <div className="row">
-                                        <div className="col-md-4 text-center">
-                                            <div className="gauge-container">
-                                                <div className="gauge-ring"></div>
-                                                <div
-                                                    className="gauge-fill"
-                                                    style={{ transform: `rotate(${result.longevity * 1.8}deg)` }}
-                                                ></div>
-                                                <div className="gauge-value">{result.longevity}%</div>
-                                            </div>
-                                            <h5 className="mt-3">Longevity Score</h5>
-                                            <span className={`risk-tag ${getRiskClass(result.riskLevel)}`}>
-                                                {result.riskLevel} Risk
-                                            </span>
-                                        </div>
-                                        <div className="col-md-8">
-                                            <div className="p-4 bg-dark-soft rounded-4 border border-info border-opacity-10">
-                                                <h4 className="text-info mb-3">AI Strategic Verdict</h4>
-                                                <p className="lead">{result.verdict}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="row mt-5">
-                                        <div className="col-lg-6">
-                                            <h4 className="mb-4 text-warning"><i className="fa-solid fa-hourglass-half me-2"></i> Obsolescence Timeline</h4>
-                                            <div className="timeline-container ps-3">
-                                                {result.timeline.map((item, i) => (
-                                                    <div key={i} className="timeline-step">
-                                                        <strong className="text-capitalize d-block text-white">{item.skill}</strong>
-                                                        <span className="text-muted small">{item.text}</span>
+                                <div className="col-lg-6">
+                                    <h4 className="text-white mb-4"><i className="fa-solid fa-bolt text-purple me-2"></i> Survival Protocols</h4>
+                                    <div className="row g-3">
+                                        {result.pivots.map((item, i) => (
+                                            <div key={i} className="col-12">
+                                                <div className="pivot-card">
+                                                    <div className="d-flex justify-content-between align-items-center mb-2">
+                                                        <span className="badge bg-purple-glow text-white text-capitalize">{item.skill}</span>
+                                                        <i className="fa-solid fa-shield-halved text-cyan opacity-50"></i>
                                                     </div>
-                                                ))}
+                                                    <p className="mb-0 text-white opacity-75">{item.action}</p>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div className="col-lg-6">
-                                            <h4 className="mb-4 text-success"><i className="fa-solid fa-arrow-right-to-bracket me-2"></i> Strategic Pivot Actions</h4>
-                                            <div className="row g-3">
-                                                {result.pivots.map((item, i) => (
-                                                    <div key={i} className="col-12">
-                                                        <div className="pivot-card">
-                                                            <div className="d-flex justify-content-between align-items-center mb-2">
-                                                                <span className="badge bg-secondary text-capitalize">{item.skill}</span>
-                                                                <i className="fa-solid fa-bolt text-success"></i>
-                                                            </div>
-                                                            <p className="mb-0 text-white-50">{item.action}</p>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div className="text-center mt-5 pt-4">
-                                        <button className="btn neon-glow-btn px-4" onClick={() => setResult(null)}>
-                                            Re-Scan New Stack
-                                        </button>
+                                        ))}
                                     </div>
                                 </div>
-                            )}
+                            </div>
+
+                            <div className="text-center mt-5">
+                                <button className="btn btn-purple-glow px-5 py-3" onClick={() => setResult(null)}>
+                                    <i className="fa-solid fa-rotate-left me-2"></i>Reset Market Scan
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </div>
             <Footer />
         </div>
     );
 }
+

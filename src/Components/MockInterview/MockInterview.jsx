@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
 import './MockInterview.css';
+import interviewGraphic from '../../assets/ai_code.png';
 
 const QUESTIONS = {
     frontend: [
@@ -114,7 +115,7 @@ const QUESTIONS = {
 
 export default function MockInterview() {
     const [selectedRole, setSelectedRole] = useState(null);
-    const [currentStep, setCurrentStep] = useState(0); // 0 to 4
+    const [currentStep, setCurrentStep] = useState(0); 
     const [selectedOption, setSelectedOption] = useState(null);
     const [isAnswered, setIsAnswered] = useState(false);
     const [score, setScore] = useState(0);
@@ -155,22 +156,31 @@ export default function MockInterview() {
     };
 
     return (
-        <div className="container-fluid p-0">
+        <div className="container-fluid p-0 login-grand-wrapper">
             <Header />
-            <div className="container-fluid mock-interview">
-                <h1 className="text-center mb-5">AI Mock Interview (MCQ Mode)</h1>
-
+            <div className="container mock-interview">
                 {!selectedRole ? (
-                    <div className="role-selection container">
-                        <h3 className="text-center mb-4">Choose your Interview Category</h3>
-                        <div className="row justify-content-center">
+                    <div className="role-selection-view">
+                        <div className="text-center mb-5">
+                            <div className="position-relative d-inline-block mb-4">
+                                <div className="glow-effect" style={{top:'50%', left:'50%', transform:'translate(-50%, -50%)', width:'150%', height:'150%'}}></div>
+                                <img src={interviewGraphic} alt="AI Interview" className="img-fluid rounded-4 shadow-lg position-relative z-2" style={{maxWidth: '280px'}} />
+                            </div>
+                            <h1 className="text-white fw-bold">Neural <span className="text-cyan">Assessment</span></h1>
+                            <p className="text-secondary">Simulate high-stakes technical and behavioral benchmarks.</p>
+                        </div>
+                        
+                        <div className="row justify-content-center g-4">
                             {['frontend', 'backend', 'hr'].map(role => (
-                                <div key={role} className="col-md-4 mb-3">
-                                    <div className="card text-center p-4 h-100 shadow-sm" style={{ cursor: 'pointer' }} onClick={() => startInterview(role)}>
-                                        <div className="card-body">
-                                            <h3 className="text-capitalize">{role} Questions</h3>
-                                            <p className="text-muted">Test your knowledge with 5 specialized MCQ questions.</p>
-                                            <button className="btn custom-btn mt-3 w-100">Start Quiz</button>
+                                <div key={role} className="col-md-4">
+                                    <div className="card h-100 text-center p-4" onClick={() => startInterview(role)}>
+                                        <div className="card-body d-flex flex-column align-items-center">
+                                            <div className="mb-3">
+                                                <i className={`fa-solid ${role === 'frontend' ? 'fa-code' : role === 'backend' ? 'fa-server' : 'fa-users-gear'} fs-1 text-cyan`}></i>
+                                            </div>
+                                            <h3 className="text-capitalize text-white mb-3">{role} Phase</h3>
+                                            <p className="text-secondary small mb-4">5 Specialized technical queries to validate your domain proficiency.</p>
+                                            <button className="btn btn-cyan-glow mt-auto w-100">Initialize Quiz</button>
                                         </div>
                                     </div>
                                 </div>
@@ -179,85 +189,88 @@ export default function MockInterview() {
                     </div>
                 ) : showFinalScore ? (
                     <div className="interview-card text-center p-5">
-                        <h2 className="mb-4">Interview Complete!</h2>
-                        <div className="display-4 mb-4">
-                            Your Score: <span className={score >= 3 ? "text-success" : "text-danger"}>{score}/5</span>
+                        <h2 className="text-white mb-4">Assessment Terminated</h2>
+                        <div className="final-score-display mb-4">
+                            <span className={score >= 3 ? "text-success" : "text-danger"}>{score}/5</span>
                         </div>
-                        <p className="lead mb-4">
-                            {score === 5 ? "Perfect! You're ready for the real thing." :
-                                score >= 3 ? "Good job! A little more practice and you'll be perfect." :
-                                    "Don't worry, keep practicing to improve your technical knowledge."}
+                        <p className="text-secondary fs-5 mb-5">
+                            {score === 5 ? "Exceptional performance. You've cleared the technical threshold." :
+                                score >= 3 ? "Adequate baseline. Some optimization recommended." :
+                                    "Threshold not met. Extensive data review required."}
                         </p>
-                        <button className="btn custom-btn btn-lg" onClick={() => setSelectedRole(null)}>
-                            Try Another Category
+                        <button className="btn btn-cyan-glow btn-lg px-5" onClick={() => setSelectedRole(null)}>
+                            Reset Simulation
                         </button>
                     </div>
                 ) : (
                     <div className="interview-card">
                         <div className="d-flex justify-content-between align-items-center mb-4">
-                            <h4 className="text-capitalize text-primary m-0">{selectedRole} Quiz</h4>
-                            <span className="badge bg-secondary">Question {currentStep + 1}/5</span>
+                            <h4 className="text-capitalize text-cyan m-0">{selectedRole} Vector <span className="text-secondary fs-6 ms-2">[{currentStep + 1}/5]</span></h4>
+                            <div className="progress w-25" style={{height: '6px', background: 'rgba(255,255,255,0.1)'}}>
+                                <div className="progress-bar bg-cyan" style={{width: `${((currentStep+1)/5)*100}%`}}></div>
+                            </div>
                         </div>
 
                         <div className="question-box mb-4">
                             <h3>{QUESTIONS[selectedRole][currentStep].question}</h3>
                         </div>
 
-                        <div className="options-list d-grid gap-3 mb-4">
+                        <div className="options-list d-grid gap-3 mb-5">
                             {QUESTIONS[selectedRole][currentStep].options.map((option, index) => {
-                                let variant = "btn-outline-primary";
+                                let variantClass = "";
                                 if (isAnswered) {
                                     if (index === QUESTIONS[selectedRole][currentStep].correct) {
-                                        variant = "btn-success";
+                                        variantClass = "btn-correct";
                                     } else if (index === selectedOption) {
-                                        variant = "btn-danger";
-                                    } else {
-                                        variant = "btn-light";
+                                        variantClass = "btn-wrong";
                                     }
                                 } else if (selectedOption === index) {
-                                    variant = "btn-primary";
+                                    variantClass = "btn-option-selected";
                                 }
 
                                 return (
                                     <button
                                         key={index}
-                                        className={`btn ${variant} text-start p-3`}
+                                        className={`btn text-start p-3 rounded-3 ${variantClass}`}
                                         onClick={() => handleOptionSelect(index)}
                                         disabled={isAnswered}
                                     >
-                                        {String.fromCharCode(65 + index)}. {option}
+                                        <span className="me-3 opacity-50">{String.fromCharCode(65 + index)}.</span> {option}
                                     </button>
                                 );
                             })}
                         </div>
 
                         {isAnswered && (
-                            <div className={`alert ${selectedOption === QUESTIONS[selectedRole][currentStep].correct ? 'alert-success' : 'alert-danger'} mb-4`}>
-                                {selectedOption === QUESTIONS[selectedRole][currentStep].correct ? (
-                                    <strong>Correct! Well done.</strong>
-                                ) : (
-                                    <>
-                                        <strong>Wrong Answer.</strong> The correct answer was: {QUESTIONS[selectedRole][currentStep].options[QUESTIONS[selectedRole][currentStep].correct]}
-                                    </>
-                                )}
+                            <div className={`answer-alert p-3 mb-4 d-flex align-items-center ${selectedOption === QUESTIONS[selectedRole][currentStep].correct ? 'answer-alert-success' : 'answer-alert-danger'}`}>
+                                <i className={`fa-solid ${selectedOption === QUESTIONS[selectedRole][currentStep].correct ? 'fa-circle-check' : 'fa-circle-xmark'} me-3 fs-4`}></i>
+                                <div>
+                                    {selectedOption === QUESTIONS[selectedRole][currentStep].correct ? (
+                                        <strong>Validation Successful</strong>
+                                    ) : (
+                                        <>
+                                            <strong>Validation Failed.</strong> Recommended Answer: {QUESTIONS[selectedRole][currentStep].options[QUESTIONS[selectedRole][currentStep].correct]}
+                                        </>
+                                    )}
+                                </div>
                             </div>
                         )}
 
-                        <div className="text-end">
+                        <div className="mt-4">
                             {!isAnswered ? (
                                 <button
-                                    className="btn custom-btn btn-lg"
+                                    className="btn btn-cyan-glow w-100 py-3 fw-bold"
                                     onClick={submitAnswer}
                                     disabled={selectedOption === null}
                                 >
-                                    Check Answer
+                                    Submit Answer
                                 </button>
                             ) : (
                                 <button
-                                    className="btn btn-primary btn-lg"
+                                    className="btn btn-purple-glow w-100 py-3 fw-bold"
                                     onClick={nextQuestion}
                                 >
-                                    {currentStep < 4 ? "Next Question" : "Finish Interview"} <i className="fa-solid fa-arrow-right"></i>
+                                    {currentStep < 4 ? "Load Next Query" : "Execute Final Score"} <i className="fa-solid fa-arrow-right ms-2"></i>
                                 </button>
                             )}
                         </div>

@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
 import "./CoverLetterArchitect.css";
+import architectGraphic from "../../assets/ai_design.png";
 
 export default function CoverLetterArchitect() {
     const location = useLocation();
@@ -22,7 +23,6 @@ export default function CoverLetterArchitect() {
         setIsGenerating(true);
         setDisplayText("");
 
-        // Simulated AI Generation Logic
         setTimeout(() => {
             const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
@@ -123,41 +123,49 @@ Cheers,
 
     const copyToClipboard = () => {
         navigator.clipboard.writeText(displayText);
-        alert("Cover letter copied to clipboard!");
     }
 
     return (
-        <div className="container-fluid p-0 cover-letter-container">
+        <div className="container-fluid p-0 login-grand-wrapper">
             <Header />
-            <div className="container">
-                <div className="architect-card mb-5">
-                    <div className="row">
-                        <div className="col-lg-5">
-                            <h2 className="mb-4">Cover Letter Architect ✍️</h2>
-                            <p className="text-muted mb-4">Craft a winning letter tailored specifically to your dream job.</p>
+            <div className="container cover-letter-container">
+                <div className="text-center mb-5">
+                    <div className="position-relative d-inline-block mb-4">
+                        <div className="glow-effect" style={{top:'50%', left:'50%', transform:'translate(-50%, -50%)', width:'150%', height:'150%'}}></div>
+                        <img src={architectGraphic} alt="AI Architect" className="img-fluid rounded-4 shadow-lg position-relative z-2" style={{maxWidth: '280px'}} />
+                    </div>
+                    <h1 className="text-white fw-bold">Neural <span className="text-cyan">Scribe</span></h1>
+                    <p className="text-secondary">Synthesize high-impact cover letters using weighted professional parameters.</p>
+                </div>
 
-                            <div className="mb-3">
-                                <label className="form-label fw-bold">Your Resume Content</label>
+                <div className="architect-card mb-5">
+                    <div className="row g-5">
+                        <div className="col-lg-5">
+                            <h3 className="text-white mb-4">Parameter Config</h3>
+
+                            <div className="mb-4">
+                                <label className="architect-label">Source Resume Data</label>
                                 <textarea
-                                    className="form-control architect-textarea"
+                                    className="glass-input w-100"
                                     rows="6"
-                                    placeholder="Paste your resume text here..."
+                                    placeholder="Paste resume content..."
                                     value={resume}
                                     onChange={(e) => setResume(e.target.value)}
                                 ></textarea>
                             </div>
 
                             <div className="mb-4">
-                                <label className="form-label fw-bold">Job Description</label>
+                                <label className="architect-label">Target Vector (Job Description)</label>
                                 <textarea
-                                    className="form-control architect-textarea"
+                                    className="glass-input w-100"
                                     rows="6"
-                                    placeholder="Paste the job description here..."
+                                    placeholder="Paste job description..."
                                     value={jobDesc}
                                     onChange={(e) => setJobDesc(e.target.value)}
                                 ></textarea>
                             </div>
 
+                            <label className="architect-label mb-3">Tone Calibration</label>
                             <div className="tone-selector">
                                 {['Professional', 'Modern', 'Creative'].map(t => (
                                     <button
@@ -171,38 +179,38 @@ Cheers,
                             </div>
 
                             <button
-                                className="btn btn-generate w-100"
+                                className="btn btn-cyan-glow w-100 py-3 mt-3 fw-bold"
                                 onClick={generateLetter}
                                 disabled={isGenerating || !resume || !jobDesc}
                             >
                                 {isGenerating ? (
-                                    <><span className="spinner-border spinner-border-sm me-2"></span>Architecting...</>
-                                ) : "Generate Cover Letter"}
+                                    <><i className="fa-solid fa-spinner fa-spin me-2"></i>Synthesizing...</>
+                                ) : "Initialize Synthesis"}
                             </button>
                         </div>
 
-                        <div className="col-lg-7 mt-4 mt-lg-0">
+                        <div className="col-lg-7">
                             <div className="letter-canvas">
                                 {displayText ? (
-                                    <>
+                                    <div className="animate-in">
                                         <div className="d-flex justify-content-between align-items-center mb-4">
-                                            <span className="badge bg-primary">Output Tone: {tone}</span>
-                                            <button className="btn btn-outline-primary btn-sm" onClick={copyToClipboard}>
-                                                <i className="fa-regular fa-copy me-1"></i> Copy
+                                            <span className="badge bg-purple-glow text-white">TONE: {tone}</span>
+                                            <button className="btn btn-sm copy-btn px-3 py-2" onClick={copyToClipboard}>
+                                                <i className="fa-regular fa-copy me-2"></i>Copy Stream
                                             </button>
                                         </div>
                                         <div className="letter-header">
-                                            <h4 className="mb-0">Generated Cover Letter</h4>
+                                            <h4 className="mb-0">Synthesized Output</h4>
                                         </div>
-                                        <div className="letter-content">
+                                        <div className="letter-content scrollbar-custom" style={{maxHeight: '400px', overflowY: 'auto'}}>
                                             {displayText}
                                             {isGenerating === false && displayText.length < letter.length && <span className="typing-indicator"></span>}
                                         </div>
-                                    </>
+                                    </div>
                                 ) : (
-                                    <div className="h-100 d-flex flex-column justify-content-center align-items-center text-muted">
-                                        <i className="fa-solid fa-file-pen fa-3x mb-3 opacity-25"></i>
-                                        <p>Your tailored cover letter will appear here.</p>
+                                    <div className="h-100 d-flex flex-column justify-content-center align-items-center text-secondary opacity-50">
+                                        <i className="fa-solid fa-microchip fa-4x mb-4"></i>
+                                        <p className="fs-5">Standby for data input...</p>
                                     </div>
                                 )}
                             </div>
@@ -214,3 +222,4 @@ Cheers,
         </div>
     );
 }
+

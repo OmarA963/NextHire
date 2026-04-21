@@ -3,11 +3,10 @@ import { TheUserContext } from '../UserContext/UserContext'
 import Header from '../Header/Header'
 import Footer from '../Footer/Footer'
 import "./Login.css"
-import loginImage from "../../assets/0002_1_explore-how-the-fast-paced-digital-revol_41pgg1YCT6WgD7h_l4EPKQ_CBbx0yxyRnirBWGDA1nx3g_cover.jpeg"
+import loginImage from "../../assets/ai_login.png"
 import { Link, useNavigate } from 'react-router-dom'
 import "../RegisterEmployee/RegisterEmployee.css";
 import { useFormik } from 'formik';
-// import { useNavigate } from 'react-router-dom'
 import * as Yup from "yup";
 import axios from 'axios';
 import Webcam from 'react-webcam';
@@ -98,9 +97,6 @@ export default function Login() {
                             setMessageErro("Face not recognized. Please try again.");
                         }
                     } else {
-                        // If no face data found for this email, maybe we allow login? 
-                        // But for this feature request, we assume we should verify everyone who has registered via our new flow.
-                        // Or strict mode:
                         setMessageErro("No face data found for this user. Please contact support.");
                         setShowWebcam(false);
                     }
@@ -118,7 +114,6 @@ export default function Login() {
 
 
     async function handleLogin(values) {
-        // Enforce Face Verification for Employees
         if (userType === "Employee") {
             const existingUsers = JSON.parse(localStorage.getItem('face_descriptors') || '[]');
             const userFaceData = existingUsers.find(u => u.label === values.email);
@@ -132,16 +127,10 @@ export default function Login() {
         setIsLoading(true);
 
         try {
-            // MOCK BACKEND: Simulate network delay
             await new Promise(resolve => setTimeout(resolve, 1000));
 
-            // SIMULATED LOGIN
             const usersJson = localStorage.getItem('users');
-            console.log("Raw Users in LocalStorage:", usersJson);
-
             const users = JSON.parse(usersJson || '[]');
-            console.log("Parsed Users:", users);
-            console.log("Attempting Login with:", values.email, values.password);
 
             const user = users.find(u => {
                 const emailMatch = u.email?.toLowerCase() === values.email?.toLowerCase();
@@ -154,13 +143,13 @@ export default function Login() {
                     token: "mock-jwt-token-" + Date.now(),
                     user: {
                         email: user.email,
-                        employeeId: user.id
+                        employeeId: user.id,
+                        name: user.fullName || user.name || 'Mock User'
                     },
                 };
 
                 setMessageErro("Login Successful (Mocked)");
-                console.log("Mock Login Response:", data);
-
+                
                 if (data.token) {
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('user', JSON.stringify(data.user));
@@ -187,19 +176,18 @@ export default function Login() {
             setIsLoading(false);
         }
     }
+
     async function getImage(compId) {
         try {
             const API_BASE_URL = import.meta.env.VITE_APP_API_URL || 'https://localhost:7209';
             const response = await axios.get(
                 `${API_BASE_URL}/api/${userType}/${compId}/${userImage}`,
                 {
-                    responseType: 'blob', // مهم جداً
+                    responseType: 'blob',
                 }
             );
-            // تحويل الصورة لشيء يمكن استخدامه كـ src في <img>
             const imageUrl = URL.createObjectURL(response.data);
             setCompImage(imageUrl);
-            console.log("Image URL:", imageUrl);
             return imageUrl;
         } catch (error) {
             console.log("Server returned:", error.response?.data || error.message);
@@ -207,6 +195,7 @@ export default function Login() {
             return null;
         }
     }
+
     const validation = Yup.object({
         email: Yup.string()
             .required("Email is required")
@@ -224,147 +213,162 @@ export default function Login() {
         validationSchema: validation,
         onSubmit: handleLogin,
     });
+
     return (
-        <div className="container-fluid p-0">
+        <div className="container-fluid p-0 login-grand-wrapper">
             <Header />
-            <div className="container-fluid">
-                <div className="hero d-flex justify-content-center align-items-center gap-4">
-                    <div className="image">
-                        <img className='w-100' src={loginImage} alt="" />
+            <div className="container main-content-wrapper py-5 mt-5">
+                <div className="row align-items-center justify-content-center">
+                    {/* Left Graphic */}
+                    <div className="col-lg-6 mb-5 mb-lg-0 text-center">
+                        <div className="login-image-container position-relative">
+                            <div className="glow-effect"></div>
+                            <img className='img-fluid rounded-4 shadow-lg position-relative z-2' src={loginImage} alt="AI Secure Login" />
+                        </div>
                     </div>
-                    <div className="info d-flex flex-column align-items-center justify-content-center gap-5">
-                        <div className="inf w-50">
-                            <h3 className='fs-2'>Log in to Exclusive</h3>
+                    
+                    {/* Right Form */}
+                    <div className="col-lg-5">
+                        <div className="login-glass-panel p-5 rounded-4 shadow-lg">
+                            <div className="login-header mb-4 text-center">
+                                <h3 className='fs-2 fw-bold text-white'>Access <span className="text-cyan">Portal</span></h3>
+                                <p className='text-secondary fs-6'>Secure AI-Driven Authentication</p>
+                            </div>
+                            
                             {messageError && (
-                                <div className="alert alert-danger">
+                                <div className="alert alert-danger bg-transparent border-danger text-danger">
                                     {messageError}
                                 </div>
                             )}
-                            <p className='text-start fs-6'>Enter you details below</p>
-                        </div>
-                        <form
-                            className='w-100 d-flex flex-column align-items-center justify-content-center'
-                            onSubmit={formik.handleSubmit}>
-                            {/* Email */}
-                            <input
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                className='input-data m-4'
-                                type="email"
-                                name="email"
-                                id="email"
-                                value={formik.values.email}
-                                placeholder='Enter your Email'
-                            />
-                            {formik.errors.email && formik.touched.email && (
-                                <div className="alert alert-danger w-50">
-                                    {String(formik.errors.email)}
-                                </div>
-                            )}
 
-                            {/* Password */}
-                            <input
-                                autoComplete="current-password"
-                                onBlur={formik.handleBlur}
-                                onChange={formik.handleChange}
-                                className='input-data m-4'
-                                type="password"
-                                name="password"
-                                id="password"
-                                value={formik.values.Password}
-                                placeholder='Password'
-                            />
-                            {formik.errors.password && formik.touched.password && (
-                                <div className="alert alert-danger w-50">
-                                    {String(formik.errors.password)}
-                                </div>
-                            )}
-                            {/* user type */}
-                            <div className="type d-flex justify-conent-center align-items-center gap-3">
-                                <p className="m-0">User: </p>
-
-                                <div className="employee">
-                                    <label htmlFor="employee">Employee</label>
+                            <form className='d-flex flex-column gap-3' onSubmit={formik.handleSubmit}>
+                                {/* Email */}
+                                <div className="form-group position-relative">
+                                    <i className="fa-regular fa-envelope position-absolute text-secondary" style={{top: '15px', left: '15px'}}></i>
                                     <input
-                                        type="radio"
-                                        name="user"
-                                        value="Employee"
-                                        id="employee"
-                                        checked={userType === "Employee"}
-                                        onChange={getUserType}
+                                        onBlur={formik.handleBlur}
+                                        onChange={formik.handleChange}
+                                        className='form-control login-input ps-5 py-3'
+                                        type="email"
+                                        name="email"
+                                        id="email"
+                                        value={formik.values.email}
+                                        placeholder='Secure Email Address'
                                     />
                                 </div>
-
-                                <div className="company">
-                                    <label htmlFor="company">Company</label>
-                                    <input
-                                        type="radio"
-                                        name="user"
-                                        value="Companies"
-                                        id="company"
-                                        checked={userType === "Companies"}
-                                        onChange={getUserType}
-
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Face Verification Button for Employees */}
-                            {userType === "Employee" && (
-                                <div className="w-100 d-flex flex-column align-items-center mt-3">
-                                    {!isFaceVerified ? (
-                                        <>
-                                            {showWebcam ? (
-                                                <div className="webcam-container mb-3 text-center">
-                                                    {isModelsLoaded ? (
-                                                        <>
-                                                            <Webcam
-                                                                audio={false}
-                                                                ref={webcamRef}
-                                                                screenshotFormat="image/jpeg"
-                                                                width={320}
-                                                                height={240}
-                                                            />
-                                                            <button type="button" className="btn btn-warning mt-2 w-100" onClick={verifyFace}>Verify Face</button>
-                                                        </>
-                                                    ) : (
-                                                        <p>Loading models...</p>
-                                                    )}
-                                                </div>
-                                            ) : (
-                                                <button type="button" className="btn btn-outline-dark mb-2" onClick={() => setShowWebcam(true)}>
-                                                    Verify Face Login
-                                                </button>
-                                            )}
-                                        </>
-                                    ) : (
-                                        <div className="alert alert-success w-50">Face Verified! ✅</div>
-                                    )}
-                                </div>
-                            )}
-
-                            {/* Submit Button */}
-                            <div className="inf_btn">
-                                {isLoading ? (
-                                    <button className='regist-hero' type='button'>
-                                        <div>Loadin...</div>
-                                    </button>
-                                ) : (
-                                    <button
-                                        disabled={!(formik.isValid && formik.dirty)}
-                                        className='regist-hero'
-                                        type='submit'
-                                    >
-                                        Login
-                                    </button>
+                                {formik.errors.email && formik.touched.email && (
+                                    <div className="text-danger small ms-2">{String(formik.errors.email)}</div>
                                 )}
-                                <Link id='link-to-register' to={"/register"}>Don't have an account?</Link>
-                            </div>
-                        </form>
+
+                                {/* Password */}
+                                <div className="form-group position-relative">
+                                    <i className="fa-solid fa-lock position-absolute text-secondary" style={{top: '15px', left: '15px'}}></i>
+                                    <input
+                                        autoComplete="current-password"
+                                        onBlur={formik.handleBlur}
+                                        onChange={formik.handleChange}
+                                        className='form-control login-input ps-5 py-3'
+                                        type="password"
+                                        name="password"
+                                        id="password"
+                                        value={formik.values.password}
+                                        placeholder='Decryption Key'
+                                    />
+                                </div>
+                                {formik.errors.password && formik.touched.password && (
+                                    <div className="text-danger small ms-2">{String(formik.errors.password)}</div>
+                                )}
+                                
+                                {/* User Type Selector */}
+                                <div className="type-selector-glass p-3 rounded mt-2 d-flex justify-content-around align-items-center">
+                                    <span className="text-white-50"><i className="fa-solid fa-user-shield me-2"></i>Entity Type:</span>
+                                    <div className="form-check form-check-inline m-0">
+                                        <input
+                                            className="form-check-input custom-radio"
+                                            type="radio"
+                                            name="user"
+                                            value="Employee"
+                                            id="employee"
+                                            checked={userType === "Employee"}
+                                            onChange={getUserType}
+                                        />
+                                        <label className="form-check-label text-light" htmlFor="employee">Seeker</label>
+                                    </div>
+                                    <div className="form-check form-check-inline m-0">
+                                        <input
+                                            className="form-check-input custom-radio"
+                                            type="radio"
+                                            name="user"
+                                            value="Companies"
+                                            id="company"
+                                            checked={userType === "Companies"}
+                                            onChange={getUserType}
+                                        />
+                                        <label className="form-check-label text-light" htmlFor="company">Company</label>
+                                    </div>
+                                </div>
+
+                                {/* Face Verification Component */}
+                                {userType === "Employee" && (
+                                    <div className="w-100 d-flex flex-column align-items-center mt-3">
+                                        {!isFaceVerified ? (
+                                            <>
+                                                {showWebcam ? (
+                                                    <div className="webcam-container mb-3 text-center w-100 rounded overflow-hidden shadow-sm" style={{border: '1px solid var(--neon-cyan)'}}>
+                                                        {isModelsLoaded ? (
+                                                            <>
+                                                                <Webcam
+                                                                    audio={false}
+                                                                    ref={webcamRef}
+                                                                    screenshotFormat="image/jpeg"
+                                                                    className="w-100 h-auto"
+                                                                />
+                                                                <button type="button" className="btn btn-warning w-100 rounded-0" onClick={verifyFace}>Initialize Scan</button>
+                                                            </>
+                                                        ) : (
+                                                            <p className="text-white my-4"><i className="fa-solid fa-spinner fa-spin me-2"></i>Loading Biometrics...</p>
+                                                        )}
+                                                    </div>
+                                                ) : (
+                                                    <button type="button" className="btn btn-outline-cyan w-100 py-2" onClick={() => setShowWebcam(true)}>
+                                                        <i className="fa-solid fa-face-viewfinder me-2"></i>Activate Biometric Scan
+                                                    </button>
+                                                )}
+                                            </>
+                                        ) : (
+                                            <div className="alert alert-success bg-transparent border-success text-success w-100 text-center">
+                                                <i className="fa-solid fa-check-circle me-2"></i>Biometric Match Verified
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* Submit Actions */}
+                                <div className="d-flex flex-column gap-3 mt-4">
+                                    {isLoading ? (
+                                        <button className='btn btn-cyan-glow py-3 fw-bold' type='button' disabled>
+                                            <i className="fa-solid fa-circle-notch fa-spin me-2"></i>Authenticating...
+                                        </button>
+                                    ) : (
+                                        <button
+                                            disabled={!(formik.isValid && formik.dirty)}
+                                            className='btn btn-cyan-glow py-3 fw-bold'
+                                            type='submit'
+                                        >
+                                            Initialize Protocol
+                                        </button>
+                                    )}
+                                    <div className="text-center">
+                                        <span className="text-secondary">Unregistered? </span>
+                                        <Link className="text-decoration-none text-cyan fw-bold border-bottom-hover" to={"/register"}>Request Access</Link>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
-                <Footer />
             </div>
+            <Footer />
         </div>
     )
 }
