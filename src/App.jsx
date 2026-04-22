@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom'
 import { useContext, useState } from 'react'
 import './App.css'
 import Home from './Components/Home/Home'
+import Footer from './Components/Footer/Footer'
 import About from "./Components/About/About"
 import AllJobs from './Components/AllJobs/AllJobs'
 import Login from './Components/Login/Login'
@@ -9,7 +10,7 @@ import RegisterState from './Components/RegisterState/RegisterState'
 import RegisterEmployee from "./Components/RegisterEmployee/RegisterEmployee"
 import RegisterCompany from "./Components/RegisterCompany/RegisterCompany"
 import InternetSpeedChecker from './Components/InternetSpeed/InternetSpeed'
-import Industry from './Components/Industry/Industry'
+import TalentAIPulse from './Components/TalentAIPulse/TalentAIPulse'
 import ProtectedRoute from './Components/ProtectedRoute/ProtectedRoute'
 import NotFound from './Components/NotFound/NotFound'
 import CompanyPage from './Components/CompanyPage/CompanyPage'
@@ -42,21 +43,21 @@ function App() {
   if (loading) return <LoadingScreen onComplete={handleLoadComplete} />;
 
   return (
-    <>
-      <ParticleCanvas />
+    <div className="app-container">
+      {/* <ParticleCanvas /> Disabled for clean theme */}
       <AIChatWidget />
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/alljobs' element={<ProtectedRoute userData={userData}><AllJobs /></ProtectedRoute>} />
         <Route path='/about' element={<About />} />
         <Route path='/login' element={<Login />} />
-        <Route path='/register' element={< RegisterState />} />
+        <Route path='/register' element={<Login />} />
         <Route path='/registeremployee' element={<RegisterEmployee />} />
         <Route path='/registeremployer' element={< RegisterCompany />} />
         <Route path='/companypage' element={< CompanyPage />} />
         <Route path='/employeepage' element={< EmployeePage />} />
         <Route path='/internetspeed' element={<ProtectedRoute userData={userData}><InternetSpeedChecker /></ProtectedRoute>} />
-        <Route path='/industry' element={<Industry />} />
+        <Route path='/pulse' element={<TalentAIPulse />} />
         <Route path='/cvbuilder' element={<ProtectedRoute userData={userData}><CVBuilder /></ProtectedRoute>} />
         <Route path='/mock-interview' element={<ProtectedRoute userData={userData}><MockInterview /></ProtectedRoute>} />
         <Route path='/career-roadmap' element={<ProtectedRoute userData={userData}><CareerRoadmap /></ProtectedRoute>} />
@@ -70,7 +71,7 @@ function App() {
         <Route path='/*' element={<NotFound />} />
         <Route path='/jobdetails' element={<ProtectedRoute userData={userData}><JobDetails /></ProtectedRoute>} />
       </Routes>
-    </>
+    </div>
   )
 }
 

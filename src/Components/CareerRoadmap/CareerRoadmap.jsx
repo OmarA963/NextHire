@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
 import './CareerRoadmap.css';
-import roadmapGraphic from '../../assets/ai_management.png';
+import roadmapBanner from '../../assets/roadmap_banner.png';
 
 const ROADMAP_TEMPLATES = {
     "frontend": [
         { title: "HTML & CSS Mastery", desc: "Learn layout techniques (Flexbox, Grid) and semantic HTML.", icon: "fa-html5" },
         { title: "JavaScript Fundamentals", desc: "Deep dive into ES6+, DOM manipulation, and Async JS.", icon: "fa-js" },
         { title: "React Ecosystem", desc: "Master components, hooks, and state management (Redux/Context).", icon: "fa-react" },
-        { title: "Styling Frameworks", desc: "Explore Tailwind CSS, Bootstrap, or CSS-in-JS.", icon: "fa-css3-alt" },
-        { title: "Testing & Deployment", desc: "Learn Jest, RTL and deploying to Vercel/Netlify.", icon: "fa-cloud-upload-alt" }
+        { title: "Styling Frameworks", desc: "Explore Tailwind CSS, Bootstrap, or CSS-in-JS.", icon: "fa-palette" },
+        { title: "Testing & Deployment", desc: "Learn Jest, RTL and deploying to Vercel/Netlify.", icon: "fa-cloud-arrow-up" }
     ],
     "backend": [
         { title: "Server-side Language", desc: "Master Node.js, Python, or Java for backend logic.", icon: "fa-node-js" },
@@ -21,7 +21,7 @@ const ROADMAP_TEMPLATES = {
     ],
     "fullstack": [
         { title: "Frontend Core", desc: "Build responsive UIs using modern JS frameworks.", icon: "fa-desktop" },
-        { title: "Backend Systems", desc: "Design and implement scalable server architectures.", icon: "fa-cog" },
+        { title: "Backend Systems", desc: "Design and implement scalable server architectures.", icon: "fa-gears" },
         { title: "Database Integration", desc: "Connect frontend apps to persistent data storage.", icon: "fa-link" },
         { title: "Full Stack Projects", desc: "Build end-to-end applications from scratch.", icon: "fa-project-diagram" },
         { title: "System Design", desc: "Learn high-level architectural patterns for large apps.", icon: "fa-microchip" }
@@ -32,6 +32,7 @@ export default function CareerRoadmap() {
     const [goal, setGoal] = useState("");
     const [roadmap, setRoadmap] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [completedSteps, setCompletedSteps] = useState([]);
 
     const generateRoadmap = (e) => {
         e.preventDefault();
@@ -56,71 +57,108 @@ export default function CareerRoadmap() {
             }
 
             setRoadmap(result);
+            setCompletedSteps(new Array(result.length).fill(false));
             setLoading(false);
+            window.scrollTo({ top: 700, behavior: 'smooth' });
         }, 1200);
     };
 
+    const toggleStep = (index) => {
+        const newSteps = [...completedSteps];
+        newSteps[index] = !newSteps[index];
+        setCompletedSteps(newSteps);
+    };
+
+    const calculateProgress = () => {
+        if (!completedSteps.length) return 0;
+        const completed = completedSteps.filter(s => s).length;
+        return Math.round((completed / completedSteps.length) * 100);
+    };
+
     return (
-        <div className="container-fluid p-0 login-grand-wrapper">
+        <div className="career-roadmap-page">
             <Header />
-            <div className="container career-roadmap">
-                <div className="roadmap-container">
-                    <div className="text-center mb-5">
-                        <div className="position-relative d-inline-block mb-4">
-                            <div className="glow-effect" style={{top:'50%', left:'50%', transform:'translate(-50%, -50%)', width:'150%', height:'150%'}}></div>
-                            <img src={roadmapGraphic} alt="AI Roadmap" className="img-fluid rounded-4 shadow-lg position-relative z-2" style={{maxWidth: '280px'}} />
+            
+            <div className="roadmap-wrapper">
+                {/* Header Section */}
+                <div className="roadmap-header-card">
+                    <img src={roadmapBanner} alt="Career Roadmap" className="roadmap-banner-img" />
+                    <div className="roadmap-intro-text">
+                        <h1>Career Path Architect</h1>
+                        <p>Map out your professional journey and track your progress toward mastering new industries.</p>
+                    </div>
+                </div>
+
+                {/* Input Card */}
+                <div className="roadmap-input-card-modern">
+                    <h3>Where do you want to go?</h3>
+                    <p>Enter your career goal to generate a personalized learning roadmap.</p>
+                    <form onSubmit={generateRoadmap} className="d-flex flex-column flex-md-row gap-3 justify-content-center">
+                        <input
+                            type="text"
+                            className="modern-roadmap-input"
+                            placeholder="e.g. Fullstack Developer"
+                            value={goal}
+                            onChange={(e) => setGoal(e.target.value)}
+                        />
+                        <button className="generate-path-btn" type="submit" disabled={loading}>
+                            {loading ? <><i className="fa-solid fa-circle-notch fa-spin me-2"></i> Generating...</> : "Generate Roadmap"}
+                        </button>
+                    </form>
+                </div>
+
+                {/* Timeline Results */}
+                {roadmap && (
+                    <div className="roadmap-timeline-section animate-in">
+                        <div className="d-flex justify-content-between align-items-center mb-5">
+                            <h2>Roadmap: <span className="text-primary text-capitalize">{goal}</span></h2>
+                            <div className="text-end">
+                                <div className="fw-bold mb-1">Overall Progress: {calculateProgress()}%</div>
+                                <div className="progress" style={{width: '200px', height: '10px', borderRadius: '10px'}}>
+                                    <div className="progress-bar bg-success" style={{width: `${calculateProgress()}%`}}></div>
+                                </div>
+                            </div>
                         </div>
-                        <h1 className="text-white fw-bold">Trajectory <span className="text-cyan">Architect</span></h1>
-                        <p className="text-secondary">Synthesize a comprehensive roadmap based on your professional aspirations.</p>
-                    </div>
 
-                    <div className="roadmap-input-card text-center">
-                        <h3 className="text-white mb-3">Target Objective</h3>
-                        <p className="text-secondary mb-4">Define your career vector to initialize path synthesis.</p>
-                        <form onSubmit={generateRoadmap} className="d-flex flex-column flex-md-row gap-3 justify-content-center align-items-center">
-                            <input
-                                type="text"
-                                className="glass-input flex-grow-1"
-                                placeholder="e.g. Senior Software Architect"
-                                value={goal}
-                                onChange={(e) => setGoal(e.target.value)}
-                                style={{maxWidth: '400px'}}
-                            />
-                            <button className="btn btn-cyan-glow py-3 px-5 fw-bold" type="submit" disabled={loading}>
-                                {loading ? <><i className="fa-solid fa-spinner fa-spin me-2"></i>Analyzing...</> : "Synthesize Path"}
-                            </button>
-                        </form>
-                    </div>
-
-                    {roadmap && (
-                        <div className="timeline-section mt-5 animate-in">
-                            <h2 className="text-center text-white mb-5">Deployment Log: <span className="text-cyan text-capitalize">{goal}</span></h2>
-                            <div className="timeline">
-                                {roadmap.map((step, index) => (
-                                    <div key={index} className={`timeline-item ${index % 2 === 0 ? 'left' : 'right'}`}>
-                                        <div className="timeline-dot"></div>
-                                        <div className="timeline-content">
-                                            <div className="timeline-icon">
-                                                <i className={`fa-solid ${step.icon}`}></i>
-                                            </div>
+                        <div className="modern-timeline">
+                            {roadmap.map((step, index) => (
+                                <div 
+                                    key={index} 
+                                    className={`timeline-milestone ${completedSteps[index] ? 'completed' : ''}`}
+                                    onClick={() => toggleStep(index)}
+                                >
+                                    <div className="milestone-marker">
+                                        {completedSteps[index] && <i className="fa-solid fa-check"></i>}
+                                    </div>
+                                    <div className="milestone-card">
+                                        <div className="milestone-icon-box">
+                                            <i className={`fa-solid ${step.icon}`}></i>
+                                        </div>
+                                        <div className="milestone-info">
                                             <h4>{step.title}</h4>
-                                            <p className="mb-0">{step.desc}</p>
+                                            <p>{step.desc}</p>
+                                        </div>
+                                        <div className="milestone-check">
+                                            <i className={completedSteps[index] ? "fa-solid fa-circle-check" : "fa-regular fa-circle"}></i>
                                         </div>
                                     </div>
-                                ))}
-                            </div>
-
-                            <div className="text-center mt-5">
-                                <button className="btn btn-purple-glow px-5 py-3" onClick={() => setRoadmap(null)}>
-                                    Reset Trajectory
-                                </button>
-                            </div>
+                                </div>
+                            ))}
                         </div>
-                    )}
-                </div>
+
+                        <div className="roadmap-actions">
+                            <button className="btn btn-outline-dark rounded-pill px-4" onClick={() => window.print()}>
+                                <i className="fa-solid fa-download me-2"></i> Download PDF
+                            </button>
+                            <button className="btn btn-link text-muted text-decoration-none" onClick={() => setRoadmap(null)}>
+                                <i className="fa-solid fa-rotate-left me-2"></i> Start Over
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
+            
             <Footer />
         </div>
     );
 }
-

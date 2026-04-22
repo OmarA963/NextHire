@@ -1,0 +1,209 @@
+/* TalentAIPulse.css - Ultra Modern Dashboard V2 */
+
+.pulse-page {
+    min-height: 100vh;
+}
+
+.pulse-wrapper {
+    padding: 60px 20px;
+    max-width: 1300px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Header Section */
+.pulse-header-card {
+    background: #ffffff;
+    border-radius: 40px;
+    overflow: hidden;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.08);
+    margin-bottom: 40px;
+    border: 1px solid #f0f0f0;
+    position: relative;
+}
+
+.pulse-banner-img {
+    width: 100%;
+    height: 450px;
+    object-fit: cover;
+    display: block;
+}
+
+.pulse-header-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 50px;
+    background: linear-gradient(to top, #ffffff, transparent);
+    text-align: center;
+}
+
+.pulse-header-overlay h1 {
+    font-size: 3.2rem !important;
+    font-weight: 900 !important;
+    color: #1a202c !important;
+    margin-bottom: 10px !important;
+    letter-spacing: -1px;
+}
+
+/* Live Ticker */
+.live-ticker-container {
+    background: #1a202c;
+    color: #ffffff;
+    padding: 12px 0;
+    margin-bottom: 40px;
+    border-radius: 12px;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.ticker-content {
+    display: inline-block;
+    animation: ticker 30s linear infinite;
+    padding-left: 100%;
+}
+
+@keyframes ticker {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
+}
+
+.ticker-item {
+    display: inline-block;
+    margin-right: 50px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.ticker-item span {
+    color: #48bb78;
+    margin-left: 5px;
+}
+
+/* Grid Layout */
+.pulse-main-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+.pulse-card-premium {
+    background: #ffffff;
+    border-radius: 32px;
+    padding: 40px;
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.04);
+    border: 1px solid #f1f1f1;
+    height: 100%;
+}
+
+.pulse-card-premium h3 {
+    font-size: 1.6rem !important;
+    font-weight: 800 !important;
+    color: #1a202c !important;
+    margin-bottom: 30px !important;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Data Points */
+.data-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 30px;
+}
+
+.data-point {
+    text-align: center;
+    padding: 20px;
+    background: #f8fafc;
+    border-radius: 20px;
+    border: 1px solid #edf2f7;
+}
+
+.data-point h4 {
+    font-size: 2rem !important;
+    font-weight: 800 !important;
+    color: #4a90e2 !important;
+    margin-bottom: 5px !important;
+}
+
+.data-point p {
+    font-size: 0.85rem;
+    color: #718096;
+    margin: 0;
+    font-weight: 600;
+}
+
+/* Hot Sectors */
+.sector-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px;
+    background: #ffffff;
+    border-radius: 18px;
+    border: 1px solid #f1f5f9;
+    margin-bottom: 12px;
+    transition: all 0.2s ease;
+}
+
+.sector-item:hover {
+    transform: translateX(10px);
+    border-color: #4a90e2;
+    background: #ebf8ff;
+}
+
+.sector-info h5 {
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    margin: 0 !important;
+    color: #2d3748 !important;
+}
+
+.sector-info span {
+    font-size: 0.8rem;
+    color: #718096;
+}
+
+.sector-trend {
+    font-weight: 800;
+    color: #48bb78;
+}
+
+/* AI Insight Panel */
+.insight-panel-premium {
+    background: linear-gradient(135deg, #1a202c, #2d3748);
+    border-radius: 32px;
+    padding: 40px;
+    color: #ffffff;
+    display: flex;
+    gap: 30px;
+    align-items: center;
+    margin-top: 40px;
+}
+
+.insight-icon-box {
+    width: 80px;
+    height: 80px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: #4a90e2;
+}
+
+@media (max-width: 1200px) {
+    .pulse-main-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+    .pulse-header-overlay h1 { font-size: 2.2rem !important; }
+    .pulse-card-premium { padding: 30px; }
+    .data-grid { grid-template-columns: 1fr; }
+}

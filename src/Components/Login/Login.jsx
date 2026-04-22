@@ -1,41 +1,30 @@
 import React, { useState, useEffect, useContext, useRef } from 'react'
 import { TheUserContext } from '../UserContext/UserContext'
-import Header from '../Header/Header'
-import Footer from '../Footer/Footer'
-import "./Login.css"
-import loginImage from "../../assets/ai_login.png"
 import { Link, useNavigate } from 'react-router-dom'
-import "../RegisterEmployee/RegisterEmployee.css";
-import { useFormik } from 'formik';
-import * as Yup from "yup";
-import axios from 'axios';
-import Webcam from 'react-webcam';
-import * as faceapi from 'face-api.js';
+import { useFormik } from 'formik'
+import * as Yup from "yup"
+import Webcam from 'react-webcam'
+import * as faceapi from 'face-api.js'
+import "./Login.css"
 
 export default function Login() {
-    const { saveUserData, compImage, setCompImage } = useContext(TheUserContext);
-    const [isLoading, setIsLoading] = useState(false);
+    const { saveUserData } = useContext(TheUserContext);
     const navigate = useNavigate();
-    let [messageError, setMessageErro] = useState('');
-    let [userType, setUserType] = useState("");
-    let [userImage, setuserImage] = useState("");
+    
+    // UI State
+    const [activeTab, setActiveTab] = useState(window.location.pathname === '/register' ? 'signup' : 'login');
+    const [loginType, setLoginType] = useState('Employee'); // 'Employee' or 'Company'
+    const [isLoading, setIsLoading] = useState(false);
+    const [messageError, setMessageError] = useState('');
+    const [messageSuccess, setMessageSuccess] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
     // Face Auth State
     const webcamRef = useRef(null);
     const [isModelsLoaded, setIsModelsLoaded] = useState(false);
     const [showWebcam, setShowWebcam] = useState(false);
     const [isFaceVerified, setIsFaceVerified] = useState(false);
-    const [verificationStatus, setVerificationStatus] = useState(null); // 'success', 'failed'
-
-    useEffect(() => {
-        console.log("Loading state changed:", isLoading);
-    }, [isLoading]);
-
-    useEffect(() => {
-        if (compImage) {
-            console.log("Updated company image:", compImage);
-        }
-    }, [compImage]);
+    const [verificationStatus, setVerificationStatus] = useState(null); 
 
     useEffect(() => {
         const loadModels = async () => {
@@ -47,28 +36,48 @@ export default function Login() {
                     faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL)
                 ]);
                 setIsModelsLoaded(true);
-                console.log("FaceAPI Models Loaded");
             } catch (err) {
-                console.error("Error loading models", err);
+                console.error("Error loading faceapi models", err);
             }
         };
         loadModels();
     }, []);
 
+    const handleLogin = async (values, faceVerified = false) => {
+        setIsLoading(true);
+        setMessageError('');
+        setMessageSuccess('');
+        try {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            const user = users.find(u => u.email?.toLowerCase() === values.email?.toLowerCase() && u.password === values.password);
 
-    function getUserType(event) {
-        const value = event.target.value;
-        setUserType(value);
-        if (value === "Employee") {
-            setuserImage("GetEmployeeImage");
-        } else if (value === "Companies") {
-            setuserImage("GetCompanyImage");
+            if (user || isFaceVerified || faceVerified) { 
+                const mockUser = user || { email: values.email, id: "mock-id-123", name: "Mock FaceUser", role: loginType };
+                localStorage.setItem('token', "mock-jwt-token-" + Date.now());
+                localStorage.setItem('user', JSON.stringify(mockUser));
+                
+                // Ensure company-id is set for dashboards
+                if (mockUser.role === 'Company') {
+                    localStorage.setItem('company-id', mockUser.id || Date.now().toString());
+                }
+
+                saveUserData();
+                navigate("/");
+            } else {
+                setMessageError("Invalid email or password");
+            }
+        } catch (error) {
+            setMessageError("Login failed. Please try again.");
+        } finally {
+            setIsLoading(false);
         }
-    }
+    };
 
+    // Verify Face
     const verifyFace = async () => {
-        if (!formik.values.email) {
-            setMessageErro("Please enter your email first.");
+        if (!loginFormik.values.email) {
+            setMessageError("Please enter your email first to verify your identity.");
             return;
         }
 
@@ -83,292 +92,284 @@ export default function Login() {
 
                 if (detection) {
                     const existingUsers = JSON.parse(localStorage.getItem('face_descriptors') || '[]');
-                    const userFaceData = existingUsers.find(u => u.label === formik.values.email);
+                    const userFaceData = existingUsers.find(u => u.label === loginFormik.values.email);
 
                     if (userFaceData) {
                         const distance = faceapi.euclideanDistance(detection.descriptor, userFaceData.descriptor);
                         if (distance < 0.6) {
                             setIsFaceVerified(true);
                             setVerificationStatus('success');
-                            setShowWebcam(false);
-                            setMessageErro("");
+                            setMessageSuccess("Face matched successfully!");
+                            setTimeout(() => setShowWebcam(false), 1000);
+                            setMessageError("");
+                            
+                            // Auto trigger login
+                            handleLogin(loginFormik.values, true);
                         } else {
                             setVerificationStatus('failed');
-                            setMessageErro("Face not recognized. Please try again.");
+                            setMessageError("Face not recognized. Please try again or use password.");
                         }
                     } else {
-                        setMessageErro("No face data found for this user. Please contact support.");
-                        setShowWebcam(false);
+                        setMessageError("No face data found for this email. Please sign up or use password.");
                     }
-
                 } else {
-                    setMessageErro("No face detected.");
+                    setMessageError("No face detected. Please look clearly at the camera.");
                 }
-
             } catch (err) {
                 console.error(err);
-                setMessageErro("Verification error.");
+                setMessageError("Verification error.");
             }
         };
     };
 
+    // Forms
+    const loginValidation = Yup.object({
+        email: Yup.string().required("Email is required").email("Invalid email"),
+        password: Yup.string().required("Password is required")
+    });
 
-    async function handleLogin(values) {
-        if (userType === "Employee") {
-            const existingUsers = JSON.parse(localStorage.getItem('face_descriptors') || '[]');
-            const userFaceData = existingUsers.find(u => u.label === values.email);
+    const signupValidation = Yup.object({
+        name: Yup.string().required("Name is required"),
+        email: Yup.string().required("Email is required").email("Invalid email"),
+        password: Yup.string().required("Password is required").min(6, "Min 6 characters"),
+        userType: Yup.string().required("Please select account type")
+    });
 
-            if (userFaceData && !isFaceVerified) {
-                setMessageErro("Please verify your face before logging in.");
-                return;
-            }
-        }
-
+    const handleSignup = async (values) => {
         setIsLoading(true);
-
+        setMessageError('');
         try {
             await new Promise(resolve => setTimeout(resolve, 1000));
-
-            const usersJson = localStorage.getItem('users');
-            const users = JSON.parse(usersJson || '[]');
-
-            const user = users.find(u => {
-                const emailMatch = u.email?.toLowerCase() === values.email?.toLowerCase();
-                const passMatch = u.password === values.password;
-                return emailMatch && passMatch;
-            });
-
-            if (user) {
-                const data = {
-                    token: "mock-jwt-token-" + Date.now(),
-                    user: {
-                        email: user.email,
-                        employeeId: user.id,
-                        name: user.fullName || user.name || 'Mock User'
-                    },
-                };
-
-                setMessageErro("Login Successful (Mocked)");
-                
-                if (data.token) {
-                    localStorage.setItem('token', data.token);
-                    localStorage.setItem('user', JSON.stringify(data.user));
-                    if (data.user?.employeeId) {
-                        localStorage.setItem("employee-id", data.user.employeeId);
-                    }
-                    saveUserData();
-                    navigate("/");
-                }
-            } else {
-                throw { response: { data: "Invalid email or password", status: 401 } };
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            if (users.find(u => u.email?.toLowerCase() === values.email?.toLowerCase())) {
+                setMessageError("Email already exists");
+                setIsLoading(false);
+                return;
             }
-
+            const newUser = { id: Date.now().toString(), ...values };
+            users.push(newUser);
+            localStorage.setItem('users', JSON.stringify(users));
+            setMessageSuccess("Account created! You can now log in.");
+            setActiveTab('login');
+            loginFormik.setFieldValue('email', values.email);
         } catch (error) {
-            console.error("Login Implementation Error:", error);
-            if (error.response) {
-                setMessageErro(error.response.data);
-            } else if (error instanceof SyntaxError) {
-                setMessageErro("Local storage data is corrupted. Please clear your browser cache.");
-            } else {
-                setMessageErro(`Login failed: ${error.message || "Unknown error"}`);
-            }
+            setMessageError("Signup failed. Please try again.");
         } finally {
             setIsLoading(false);
         }
-    }
+    };
 
-    async function getImage(compId) {
-        try {
-            const API_BASE_URL = import.meta.env.VITE_APP_API_URL || 'https://localhost:7209';
-            const response = await axios.get(
-                `${API_BASE_URL}/api/${userType}/${compId}/${userImage}`,
-                {
-                    responseType: 'blob',
-                }
-            );
-            const imageUrl = URL.createObjectURL(response.data);
-            setCompImage(imageUrl);
-            return imageUrl;
-        } catch (error) {
-            console.log("Server returned:", error.response?.data || error.message);
-            alert("Something went wrong. Please try again.");
-            return null;
-        }
-    }
-
-    const validation = Yup.object({
-        email: Yup.string()
-            .required("Email is required")
-            .email("Email is not valid!"),
-        password: Yup.string()
-            .required("Password is required")
-            .matches(/^[A-Z][a-z0-9]{5,10}$/, "Password must start with uppercase..."),
-    });
-
-    const formik = useFormik({
-        initialValues: {
-            email: "",
-            password: "",
-        },
-        validationSchema: validation,
+    const loginFormik = useFormik({
+        initialValues: { email: "", password: "" },
+        validationSchema: loginValidation,
         onSubmit: handleLogin,
     });
 
+    const signupFormik = useFormik({
+        initialValues: { name: "", email: "", password: "", userType: "Employee" },
+        validationSchema: signupValidation,
+        onSubmit: handleSignup,
+    });
+
     return (
-        <div className="container-fluid p-0 login-grand-wrapper">
-            <Header />
-            <div className="container main-content-wrapper py-5 mt-5">
-                <div className="row align-items-center justify-content-center">
-                    {/* Left Graphic */}
-                    <div className="col-lg-6 mb-5 mb-lg-0 text-center">
-                        <div className="login-image-container position-relative">
-                            <div className="glow-effect"></div>
-                            <img className='img-fluid rounded-4 shadow-lg position-relative z-2' src={loginImage} alt="AI Secure Login" />
-                        </div>
+        <div className="auth-page-wrapper">
+            <div className="auth-glass-card position-relative">
+                {/* Header */}
+                <div className="auth-logo">
+                    <i className="fa-solid fa-chart-line me-2" style={{color: '#4A90E2'}}></i>
+                    NextHire
+                </div>
+                <h2 className="auth-title">Welcome to NextHire</h2>
+
+                {/* Tabs */}
+                <div className="auth-tabs">
+                    <div 
+                        className={`auth-tab ${activeTab === 'login' ? 'active' : ''}`}
+                        onClick={() => {setActiveTab('login'); setMessageError(''); setMessageSuccess('');}}
+                    >
+                        LOGIN
                     </div>
-                    
-                    {/* Right Form */}
-                    <div className="col-lg-5">
-                        <div className="login-glass-panel p-5 rounded-4 shadow-lg">
-                            <div className="login-header mb-4 text-center">
-                                <h3 className='fs-2 fw-bold text-white'>Access <span className="text-cyan">Portal</span></h3>
-                                <p className='text-secondary fs-6'>Secure AI-Driven Authentication</p>
-                            </div>
-                            
-                            {messageError && (
-                                <div className="alert alert-danger bg-transparent border-danger text-danger">
-                                    {messageError}
-                                </div>
-                            )}
-
-                            <form className='d-flex flex-column gap-3' onSubmit={formik.handleSubmit}>
-                                {/* Email */}
-                                <div className="form-group position-relative">
-                                    <i className="fa-regular fa-envelope position-absolute text-secondary" style={{top: '15px', left: '15px'}}></i>
-                                    <input
-                                        onBlur={formik.handleBlur}
-                                        onChange={formik.handleChange}
-                                        className='form-control login-input ps-5 py-3'
-                                        type="email"
-                                        name="email"
-                                        id="email"
-                                        value={formik.values.email}
-                                        placeholder='Secure Email Address'
-                                    />
-                                </div>
-                                {formik.errors.email && formik.touched.email && (
-                                    <div className="text-danger small ms-2">{String(formik.errors.email)}</div>
-                                )}
-
-                                {/* Password */}
-                                <div className="form-group position-relative">
-                                    <i className="fa-solid fa-lock position-absolute text-secondary" style={{top: '15px', left: '15px'}}></i>
-                                    <input
-                                        autoComplete="current-password"
-                                        onBlur={formik.handleBlur}
-                                        onChange={formik.handleChange}
-                                        className='form-control login-input ps-5 py-3'
-                                        type="password"
-                                        name="password"
-                                        id="password"
-                                        value={formik.values.password}
-                                        placeholder='Decryption Key'
-                                    />
-                                </div>
-                                {formik.errors.password && formik.touched.password && (
-                                    <div className="text-danger small ms-2">{String(formik.errors.password)}</div>
-                                )}
-                                
-                                {/* User Type Selector */}
-                                <div className="type-selector-glass p-3 rounded mt-2 d-flex justify-content-around align-items-center">
-                                    <span className="text-white-50"><i className="fa-solid fa-user-shield me-2"></i>Entity Type:</span>
-                                    <div className="form-check form-check-inline m-0">
-                                        <input
-                                            className="form-check-input custom-radio"
-                                            type="radio"
-                                            name="user"
-                                            value="Employee"
-                                            id="employee"
-                                            checked={userType === "Employee"}
-                                            onChange={getUserType}
-                                        />
-                                        <label className="form-check-label text-light" htmlFor="employee">Seeker</label>
-                                    </div>
-                                    <div className="form-check form-check-inline m-0">
-                                        <input
-                                            className="form-check-input custom-radio"
-                                            type="radio"
-                                            name="user"
-                                            value="Companies"
-                                            id="company"
-                                            checked={userType === "Companies"}
-                                            onChange={getUserType}
-                                        />
-                                        <label className="form-check-label text-light" htmlFor="company">Company</label>
-                                    </div>
-                                </div>
-
-                                {/* Face Verification Component */}
-                                {userType === "Employee" && (
-                                    <div className="w-100 d-flex flex-column align-items-center mt-3">
-                                        {!isFaceVerified ? (
-                                            <>
-                                                {showWebcam ? (
-                                                    <div className="webcam-container mb-3 text-center w-100 rounded overflow-hidden shadow-sm" style={{border: '1px solid var(--neon-cyan)'}}>
-                                                        {isModelsLoaded ? (
-                                                            <>
-                                                                <Webcam
-                                                                    audio={false}
-                                                                    ref={webcamRef}
-                                                                    screenshotFormat="image/jpeg"
-                                                                    className="w-100 h-auto"
-                                                                />
-                                                                <button type="button" className="btn btn-warning w-100 rounded-0" onClick={verifyFace}>Initialize Scan</button>
-                                                            </>
-                                                        ) : (
-                                                            <p className="text-white my-4"><i className="fa-solid fa-spinner fa-spin me-2"></i>Loading Biometrics...</p>
-                                                        )}
-                                                    </div>
-                                                ) : (
-                                                    <button type="button" className="btn btn-outline-cyan w-100 py-2" onClick={() => setShowWebcam(true)}>
-                                                        <i className="fa-solid fa-face-viewfinder me-2"></i>Activate Biometric Scan
-                                                    </button>
-                                                )}
-                                            </>
-                                        ) : (
-                                            <div className="alert alert-success bg-transparent border-success text-success w-100 text-center">
-                                                <i className="fa-solid fa-check-circle me-2"></i>Biometric Match Verified
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-
-                                {/* Submit Actions */}
-                                <div className="d-flex flex-column gap-3 mt-4">
-                                    {isLoading ? (
-                                        <button className='btn btn-cyan-glow py-3 fw-bold' type='button' disabled>
-                                            <i className="fa-solid fa-circle-notch fa-spin me-2"></i>Authenticating...
-                                        </button>
-                                    ) : (
-                                        <button
-                                            disabled={!(formik.isValid && formik.dirty)}
-                                            className='btn btn-cyan-glow py-3 fw-bold'
-                                            type='submit'
-                                        >
-                                            Initialize Protocol
-                                        </button>
-                                    )}
-                                    <div className="text-center">
-                                        <span className="text-secondary">Unregistered? </span>
-                                        <Link className="text-decoration-none text-cyan fw-bold border-bottom-hover" to={"/register"}>Request Access</Link>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
+                    <div 
+                        className={`auth-tab ${activeTab === 'signup' ? 'active' : ''}`}
+                        onClick={() => {setActiveTab('signup'); setMessageError(''); setMessageSuccess('');}}
+                    >
+                        SIGN UP
                     </div>
                 </div>
+
+                {/* Messages */}
+                {messageError && <div className="alert alert-danger py-2 small border-0 bg-transparent text-danger text-center">{messageError}</div>}
+                {messageSuccess && <div className="alert alert-success py-2 small border-0 bg-transparent text-success text-center">{messageSuccess}</div>}
+
+                {/* Content */}
+                {activeTab === 'login' ? (
+                    <div className="animate-in">
+                        {/* Login Type Toggle */}
+                        <div className="login-type-toggle mb-4">
+                            <div 
+                                className={`type-option ${loginType === 'Employee' ? 'active employee' : ''}`}
+                                onClick={() => setLoginType('Employee')}
+                            >
+                                <i className="fa-solid fa-user-tie me-2"></i>Candidate
+                            </div>
+                            <div 
+                                className={`type-option ${loginType === 'Company' ? 'active company' : ''}`}
+                                onClick={() => setLoginType('Company')}
+                            >
+                                <i className="fa-solid fa-building me-2"></i>Company
+                            </div>
+                        </div>
+
+                        <p className="auth-subtitle text-center">
+                            {loginType === 'Employee' ? 'Enter your candidate credentials to access jobs.' : 'Enter your corporate keys to manage talent.'}
+                        </p>
+                        <form onSubmit={loginFormik.handleSubmit}>
+                            <div className="auth-form-group">
+                                <label className="auth-label">Email Address</label>
+                                <div className="auth-input-container">
+                                    <input 
+                                        type="email" 
+                                        name="email"
+                                        className="auth-input" 
+                                        placeholder="example@email.com"
+                                        onChange={loginFormik.handleChange}
+                                        onBlur={loginFormik.handleBlur}
+                                        value={loginFormik.values.email}
+                                    />
+                                </div>
+                            </div>
+                            
+                            <div className="auth-form-group">
+                                <label className="auth-label">Password</label>
+                                <div className="auth-input-container">
+                                    <input 
+                                        type={showPassword ? "text" : "password"} 
+                                        name="password"
+                                        className="auth-input" 
+                                        placeholder="••••••••"
+                                        onChange={loginFormik.handleChange}
+                                        onBlur={loginFormik.handleBlur}
+                                        value={loginFormik.values.password}
+                                    />
+                                    <i 
+                                        className={`fa-solid ${showPassword ? 'fa-eye-slash' : 'fa-eye'} auth-icon-right`}
+                                        onClick={() => setShowPassword(!showPassword)}
+                                    ></i>
+                                </div>
+                                <a href="#" className="auth-forgot">Forgot Password?</a>
+                            </div>
+
+                            <button 
+                                type="submit" 
+                                className="auth-btn-primary" 
+                                disabled={isLoading}
+                            >
+                                {isLoading ? <i className="fa-solid fa-circle-notch fa-spin"></i> : (isFaceVerified ? 'Face Verified - Logging In...' : 'Sign In')}
+                            </button>
+                        </form>
+
+                        <div className="auth-divider">or sign in with</div>
+
+                        <div className="auth-social-container">
+                            <button type="button" className="auth-social-btn text-danger">
+                                <i className="fa-brands fa-google"></i>
+                            </button>
+                            <button type="button" className="auth-social-btn text-primary">
+                                <i className="fa-brands fa-linkedin-in"></i>
+                            </button>
+                            <button type="button" className="auth-social-btn face-id" title="Login with Face ID" onClick={() => setShowWebcam(true)}>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="face-id-logo">
+                                    <path d="M4 8V6a2 2 0 0 1 2-2h2" />
+                                    <path d="M4 16v2a2 2 0 0 0 2 2h2" />
+                                    <path d="M16 4h2a2 2 0 0 1 2 2v2" />
+                                    <path d="M16 20h2a2 2 0 0 0 2-2v-2" />
+                                    <path d="M9 10h.01" />
+                                    <path d="M15 10h.01" />
+                                    <path d="M9.5 15a3.5 3.5 0 0 0 5 0" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                                ) : (
+                    <div className="animate-in">
+                        <p className="auth-subtitle text-center mb-4">Choose your journey on NextHire.</p>
+                        
+                        <div className="d-flex flex-column gap-3">
+                            {/* Candidate Choice */}
+                            <Link to="/registeremployee" className="signup-choice-card">
+                                <div className="choice-icon candidate">
+                                    <i className="fa-solid fa-user-tie"></i>
+                                </div>
+                                <div className="choice-text">
+                                    <h4>I'm a Candidate</h4>
+                                    <p>Find your dream job and build your career with AI tools.</p>
+                                </div>
+                                <i className="fa-solid fa-chevron-right arrow-icon"></i>
+                            </Link>
+
+                            {/* Company Choice */}
+                            <Link to="/registeremployer" className="signup-choice-card">
+                                <div className="choice-icon company">
+                                    <i className="fa-solid fa-building"></i>
+                                </div>
+                                <div className="choice-text">
+                                    <h4>I'm an Employer</h4>
+                                    <p>Hire top talent and manage your recruitment pipeline.</p>
+                                </div>
+                                <i className="fa-solid fa-chevron-right arrow-icon"></i>
+                            </Link>
+                        </div>
+
+                        <div className="mt-4 text-center">
+                            <p className="small text-muted">Join a community of 50,000+ professionals.</p>
+                        </div>
+                    </div>
+                )}
+
+                {/* Footer Link */}
+                <div className="auth-footer-text mt-4">
+                    {activeTab === 'login' ? (
+                        <>Don't have an account? <span className="auth-footer-link" onClick={() => setActiveTab('signup')}>Sign Up</span></>
+                    ) : (
+                        <>Already have an account? <span className="auth-footer-link" onClick={() => setActiveTab('login')}>Sign In</span></>
+                    )}
+                </div>
+
+                {/* Face ID Modal Overlay */}
+                {showWebcam && (
+                    <div className="face-id-modal">
+                        <button className="close-modal-btn" onClick={() => setShowWebcam(false)}>
+                            <i className="fa-solid fa-times"></i>
+                        </button>
+                        <h4 className="mb-3" style={{color: '#1A1A1A'}}><i className="fa-solid fa-face-viewfinder text-primary me-2"></i>Face Verification</h4>
+                        <p className="text-secondary small mb-4">Position your face in the center of the frame</p>
+                        
+                        {isModelsLoaded ? (
+                            <>
+                                <Webcam
+                                    audio={false}
+                                    ref={webcamRef}
+                                    screenshotFormat="image/jpeg"
+                                    width={300}
+                                    height={225}
+                                />
+                                <button className="auth-btn-primary mt-4" onClick={verifyFace}>
+                                    <i className="fa-solid fa-camera me-2"></i> Scan Face
+                                </button>
+                            </>
+                        ) : (
+                            <div className="py-5 text-secondary">
+                                <i className="fa-solid fa-spinner fa-spin fs-2 mb-3"></i>
+                                <p>Loading biometric models...</p>
+                            </div>
+                        )}
+                        
+                        {verificationStatus === 'failed' && (
+                            <p className="text-danger small mt-3">Match failed. Please try again.</p>
+                        )}
+                    </div>
+                )}
             </div>
-            <Footer />
         </div>
     )
 }

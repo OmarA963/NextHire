@@ -1,75 +1,188 @@
-.cover-letter-container {
-    padding: 60px 0;
-    min-height: 85vh;
-    background-color: transparent !important;
+/* CoverLetterArchitect.css - Modern & Bright Redesign */
+
+.cover-letter-page {
+    min-height: 100vh;
 }
 
-.architect-card {
-    background: rgba(10, 15, 30, 0.4);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(0, 240, 255, 0.1);
-    border-radius: 24px;
+.cover-letter-wrapper {
+    padding: 60px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Header Section */
+.letter-header-card {
+    background: #ffffff;
+    border-radius: 32px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05);
+    margin-bottom: 40px;
+    border: 1px solid #f0f0f0;
+    text-align: center;
+}
+
+.letter-banner-img {
+    width: 100%;
+    height: 380px;
+    object-fit: cover;
+    display: block;
+}
+
+.letter-intro-text {
     padding: 40px;
-    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.4);
 }
 
-.tone-selector {
+.letter-intro-text h1 {
+    font-size: 2.6rem !important;
+    font-weight: 800 !important;
+    color: #1a202c !important;
+    margin-bottom: 12px !important;
+}
+
+.letter-intro-text p {
+    font-size: 1.15rem;
+    color: #718096;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* Main Layout */
+.architect-main-card {
+    background: #ffffff;
+    border-radius: 28px;
+    padding: 40px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+    border: 1px solid #f0f0f0;
+}
+
+.architect-label-modern {
+    display: block;
+    font-weight: 700;
+    color: #4a5568;
+    margin-bottom: 10px;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.modern-letter-textarea {
+    width: 100%;
+    padding: 16px 20px;
+    border-radius: 16px;
+    border: 2px solid #f1f5f9;
+    background: #f8fafc;
+    resize: none;
+    font-size: 0.95rem;
+    color: #1a202c;
+    transition: all 0.3s ease;
+}
+
+.modern-letter-textarea:focus {
+    background: #ffffff;
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 5px rgba(74, 144, 226, 0.1);
+    outline: none;
+}
+
+/* Tone Selector */
+.tone-selector-modern {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     margin-bottom: 30px;
-    justify-content: flex-start;
 }
 
-.tone-btn {
-    padding: 10px 24px;
-    border-radius: 50px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.02);
-    color: #94a3b8;
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.tone-btn-modern {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid #edf2f7;
+    border-radius: 12px;
+    background: #ffffff;
     font-weight: 600;
+    color: #4a5568;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
-.tone-btn:hover {
-    border-color: var(--neon-cyan);
-    color: white;
+.tone-btn-modern.active {
+    border-color: #4a90e2;
+    background: #ebf8ff;
+    color: #4a90e2;
 }
 
-.tone-btn.active {
-    background: rgba(0, 240, 255, 0.1);
-    color: var(--neon-cyan);
-    border-color: var(--neon-cyan);
-    box-shadow: 0 0 15px var(--neon-cyan-transparent);
+.generate-letter-btn {
+    width: 100%;
+    padding: 18px;
+    background: #1a202c !important;
+    color: #ffffff !important;
+    border-radius: 16px !important;
+    font-weight: 800 !important;
+    font-size: 1.1rem !important;
+    border: none;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
 }
 
-.letter-canvas {
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: 18px;
+.generate-letter-btn:hover:not(:disabled) {
+    background: #000 !important;
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.15) !important;
+}
+
+/* Letter Canvas */
+.letter-paper-canvas {
+    background: #ffffff;
+    border-radius: 4px;
     padding: 50px;
-    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 15px 50px rgba(0,0,0,0.06);
+    border: 1px solid #eee;
     min-height: 600px;
     position: relative;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    font-family: 'Inter', sans-serif;
-    line-height: 1.8;
-    color: #e2e8f0;
+    font-family: 'Georgia', serif;
+    line-height: 1.6;
+    color: #333;
+    white-space: pre-wrap;
 }
 
-.letter-content {
-    white-space: pre-line;
-    font-size: 1rem;
+.canvas-placeholder {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #a0aec0;
+    text-align: center;
+    font-family: var(--bs-body-font-family);
 }
 
-.typing-indicator {
+.copy-stream-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #4a5568;
+    transition: all 0.2s ease;
+    z-index: 5;
+}
+
+.copy-stream-btn:hover {
+    background: #edf2f7;
+    color: #1a202c;
+}
+
+.typing-indicator-modern {
     display: inline-block;
-    width: 3px;
-    height: 1.2rem;
-    background: var(--neon-cyan);
-    margin-left: 4px;
-    animation: blink 1s infinite;
-    box-shadow: 0 0 10px var(--neon-cyan);
+    width: 2px;
+    height: 1.2em;
+    background: #4a90e2;
+    margin-left: 2px;
+    animation: blink 0.8s infinite;
+    vertical-align: middle;
 }
 
 @keyframes blink {
@@ -77,24 +190,7 @@
     50% { opacity: 0; }
 }
 
-.letter-header {
-    border-bottom: 2px solid var(--neon-cyan);
-    margin-bottom: 40px;
-    padding-bottom: 15px;
-}
-
-.letter-header h4 {
-    color: white;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    font-size: 1.1rem;
-}
-
-.architect-label {
-    color: #94a3b8;
-    font-weight: 600;
-    margin-bottom: 10px;
-    display: block;
-    font-size: 0.9rem;
+@media (max-width: 991px) {
+    .architect-main-card { padding: 25px; }
+    .letter-paper-canvas { padding: 30px; margin-top: 30px; }
 }

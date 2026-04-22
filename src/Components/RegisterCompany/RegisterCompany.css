@@ -1,0 +1,114 @@
+/* RegisterCompany.css - Modern Enterprise Onboarding */
+
+.reg-company-page {
+    min-height: 100vh;
+    background: #f8fafc;
+}
+
+.reg-company-container {
+    padding: 60px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.reg-company-card {
+    background: #ffffff;
+    border-radius: 32px;
+    padding: 50px;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.05);
+    border: 1px solid #f0f0f0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+}
+
+.reg-company-banner-side {
+    flex: 1;
+    min-width: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.reg-company-img {
+    width: 100%;
+    max-width: 450px;
+    border-radius: 24px;
+    margin-bottom: 30px;
+}
+
+.reg-company-form-side {
+    flex: 1;
+    min-width: 400px;
+}
+
+.reg-company-form-side h1 {
+    font-size: 2.2rem !important;
+    font-weight: 800 !important;
+    color: #1a202c !important;
+    margin-bottom: 10px !important;
+}
+
+.reg-company-form-side p {
+    color: #718096;
+    margin-bottom: 35px;
+}
+
+.modern-reg-input {
+    width: 100%;
+    padding: 16px 20px;
+    border-radius: 14px;
+    border: 2px solid #e2e8f0;
+    background: #f8fafc;
+    font-size: 1rem;
+    color: #1a202c;
+    transition: all 0.2s ease;
+    margin-bottom: 15px;
+}
+
+.modern-reg-input:focus {
+    border-color: #4a90e2;
+    background: #ffffff;
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.1);
+}
+
+.reg-btn-submit {
+    width: 100%;
+    padding: 16px;
+    background: #1a202c !important;
+    color: #ffffff !important;
+    border-radius: 14px !important;
+    font-weight: 800 !important;
+    font-size: 1.1rem !important;
+    border: none;
+    transition: all 0.3s ease !important;
+    margin-top: 10px;
+}
+
+.reg-btn-submit:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+.switch-reg-link {
+    display: block;
+    text-align: center;
+    margin-top: 25px;
+    color: #718096;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.switch-reg-link:hover {
+    color: #4a90e2;
+}
+
+@media (max-width: 992px) {
+    .reg-company-card { padding: 30px; }
+    .reg-company-banner-side { min-width: 100%; }
+    .reg-company-form-side { min-width: 100%; }
+}

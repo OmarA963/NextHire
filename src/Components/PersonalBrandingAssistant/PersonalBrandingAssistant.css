@@ -1,89 +1,205 @@
-.personal-branding {
-    padding: 60px 0;
-    min-height: 85vh;
-    background-color: transparent !important;
+/* PersonalBrandingAssistant.css - Modern & Bright Redesign */
+
+.branding-assistant-page {
+    min-height: 100vh;
 }
 
-.branding-container {
-    max-width: 1000px;
+.branding-wrapper {
+    padding: 60px 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Header Section */
+.branding-header-card {
+    background: #ffffff;
+    border-radius: 32px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05);
+    margin-bottom: 40px;
+    border: 1px solid #f0f0f0;
+    text-align: center;
+}
+
+.branding-banner-img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    display: block;
+}
+
+.branding-intro-text {
+    padding: 40px;
+}
+
+.branding-intro-text h1 {
+    font-size: 2.6rem !important;
+    font-weight: 800 !important;
+    color: #1a202c !important;
+    margin-bottom: 12px !important;
+}
+
+.branding-intro-text p {
+    font-size: 1.15rem;
+    color: #718096;
+    max-width: 700px;
     margin: 0 auto;
 }
 
-.branding-input-card {
-    background: rgba(10, 15, 30, 0.4);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(0, 240, 255, 0.1);
-    border-radius: 20px;
-    padding: 3rem;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    margin-bottom: 4rem;
+/* Checklist Section */
+.checklist-card {
+    background: #ffffff;
+    border-radius: 28px;
+    padding: 35px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+    border: 1px solid #f1f1f1;
+    margin-bottom: 40px;
 }
 
-.result-card {
-    background: rgba(15, 23, 42, 0.4);
-    backdrop-filter: blur(15px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 20px;
-    padding: 40px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-    margin-top: 40px;
+.checklist-card h3 {
+    font-size: 1.4rem !important;
+    font-weight: 700 !important;
+    color: #1a202c !important;
+    margin-bottom: 25px !important;
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
-.suggestion-box {
-    border-left: 4px solid var(--neon-cyan);
-    padding: 25px;
-    margin-bottom: 25px;
-    background: rgba(255, 255, 255, 0.02);
-    border-radius: 0 15px 15px 0;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+.checklist-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
 }
 
-.suggestion-box:hover {
-    transform: translateX(10px);
-    background: rgba(0, 240, 255, 0.05);
-    border-color: var(--neon-purple);
+.checklist-item:hover {
+    background: #f8fafc;
+    border-color: #edf2f7;
 }
 
-.tag {
-    font-size: 0.75rem;
-    padding: 4px 14px;
-    border-radius: 100px;
-    text-transform: uppercase;
-    font-weight: 700;
-    margin-bottom: 12px;
-    display: inline-block;
-    letter-spacing: 1px;
+.checklist-item.completed {
+    opacity: 0.6;
 }
 
-.tag-professional {
-    background: rgba(13, 110, 253, 0.1);
-    color: #3b82f6;
-    border: 1px solid rgba(59, 130, 246, 0.2);
+.checklist-item.completed span {
+    text-decoration: line-through;
 }
 
-.tag-creative {
-    background: rgba(168, 85, 247, 0.1);
-    color: #a855f7;
-    border: 1px solid rgba(168, 85, 247, 0.2);
-}
-
-.tag-minimalist {
-    background: rgba(20, 184, 166, 0.1);
-    color: #14b8a6;
-    border: 1px solid rgba(20, 184, 166, 0.2);
-}
-
-.copy-btn {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: #cbd5e1;
-    font-size: 0.8rem;
+.custom-checkbox {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #e2e8f0;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: transparent;
     transition: all 0.2s ease;
 }
 
-.copy-btn:hover {
-    background: var(--neon-cyan-transparent);
-    color: white;
-    border-color: var(--neon-cyan);
+.checklist-item.completed .custom-checkbox {
+    background: #48bb78;
+    border-color: #48bb78;
+    color: #fff;
+}
+
+/* Generator Section */
+.generator-card {
+    background: #ffffff;
+    border-radius: 28px;
+    padding: 45px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.04);
+    border: 1px solid #f0f0f0;
+}
+
+.modern-branding-textarea {
+    width: 100%;
+    padding: 18px 24px;
+    border-radius: 18px;
+    border: 2px solid #f1f5f9;
+    background: #f8fafc;
+    resize: none;
+    font-size: 1rem;
+    color: #1a202c;
+    transition: all 0.3s ease;
+    margin-bottom: 25px;
+}
+
+.modern-branding-textarea:focus {
+    background: #ffffff;
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 5px rgba(74, 144, 226, 0.1);
+    outline: none;
+}
+
+.branding-action-btn {
+    padding: 16px 45px;
+    background: #1a202c !important;
+    color: #ffffff !important;
+    border-radius: 16px !important;
+    font-weight: 800 !important;
+    font-size: 1.1rem !important;
+    border: none;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+}
+
+.branding-action-btn:hover:not(:disabled) {
+    background: #000 !important;
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.15) !important;
+}
+
+/* Results Grid */
+.results-grid-modern {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 25px;
+    margin-top: 50px;
+}
+
+.suggestion-card-premium {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 30px;
+    border: 1px solid #edf2f7;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.suggestion-card-premium:hover {
+    box-shadow: 0 15px 40px rgba(0,0,0,0.05);
+    border-color: #4a90e2;
+}
+
+.result-tag {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 15px;
+}
+
+.tag-pro { background: #ebf8ff; color: #3182ce; }
+.tag-creative { background: #faf5ff; color: #805ad5; }
+.tag-minimal { background: #f7fafc; color: #4a5568; }
+
+.result-text {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #2d3748;
+    margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+    .branding-wrapper { padding: 30px 15px; }
+    .generator-card { padding: 30px; }
 }

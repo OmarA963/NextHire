@@ -1,65 +1,104 @@
+/* RegisterEmployee.css - Modern Candidate Onboarding */
 
-.hero .regist-hero {
-    border: 2px solid var(--special-color-1);
-    padding: 10px 20px;
-    font-size: 17px;
-    color: #fff !important;
-    transition: var(--main-transition);
-    position: relative;
-    background-color: transparent;
+.reg-candidate-page {
+    min-height: 100vh;
+    background: #f8fafc;
 }
-.hero .regist-hero svg {
-    color: #fff !important;
+
+.reg-candidate-container {
+    padding: 60px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
-.hero .regist-hero:disabled {
-    color: var(--special-color-1) !important;
-}
-.hero .regist-hero:disabled::before, .hero .regist-hero:disabled::after {
-    width: 0;
-}
-.hero .regist-hero::before, .hero .regist-hero::after{
-    position: absolute;
-    content: "";
-    top: 0;
-    height: 100%;
-    width: 52%;
-    background-color: var(--special-color-1);
-    transition: var(--main-transition);
-    z-index: -1;
-}
-.hero .regist-hero::before{
-    left: -1%;
-}
-.hero .regist-hero::after{
-    right: -1%;
-}
-.hero .regist-hero:hover {
-    color: #fff !important;
-}
-.hero .regist-hero:hover::before,  .hero .regist-hero:hover::after{
-    width: 52%;
-}
-.industry {
-    padding: 0;
+
+.reg-candidate-card {
+    background: #ffffff;
+    border-radius: 32px;
+    padding: 50px;
+    box-shadow: 0 25px 70px rgba(0, 0, 0, 0.05);
+    border: 1px solid #f0f0f0;
     display: flex;
-    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 40px;
+}
+
+.reg-candidate-banner-side {
+    flex: 1;
+    min-width: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
+    text-align: center;
 }
-.industry button {
-    background-color: #f2f6ff ;
-    color: var(--special-color-1);
-    border: 2px solid var(--special-color-1);
-    transition: var(--main-transition);
-    font-size: 12px;
-    padding: 0;
+
+.reg-candidate-img {
+    width: 100%;
+    max-width: 450px;
+    border-radius: 24px;
+    margin-bottom: 30px;
 }
-.industry button:hover {
-    background-color: var(--special-color-1);
-    color: #fff !important;
+
+.reg-candidate-form-side {
+    flex: 1;
+    min-width: 400px;
 }
-@media (max-width:992px) {
-    .industry {
-        justify-content: flex-start !important;
-        align-items: flex-start !important;
-    }
+
+.reg-candidate-form-side h1 {
+    font-size: 2.2rem !important;
+    font-weight: 800 !important;
+    color: #1a202c !important;
+    margin-bottom: 10px !important;
+}
+
+.reg-candidate-form-side p {
+    color: #718096;
+    margin-bottom: 35px;
+}
+
+.biometric-box {
+    background: #f8fafc;
+    border: 2px dashed #e2e8f0;
+    border-radius: 20px;
+    padding: 25px;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.webcam-preview {
+    width: 100%;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+.btn-scan {
+    width: 100%;
+    padding: 12px;
+    background: #4a90e2 !important;
+    color: #ffffff !important;
+    border-radius: 12px !important;
+    font-weight: 700 !important;
+    border: none;
+    transition: all 0.2s ease;
+}
+
+.verified-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: #38a169;
+    font-weight: 700;
+    padding: 15px;
+    background: #f0fff4;
+    border-radius: 12px;
+    margin-bottom: 15px;
+}
+
+@media (max-width: 992px) {
+    .reg-candidate-card { padding: 30px; }
+    .reg-candidate-banner-side { min-width: 100%; }
+    .reg-candidate-form-side { min-width: 100%; }
 }

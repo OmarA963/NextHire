@@ -1,112 +1,142 @@
-.speed-checker-container {
-    padding: 60px 0;
-    min-height: 85vh;
-    background-color: transparent !important;
+/* InternetSpeed.css - Modern Speed Test Redesign */
+
+.speed-test-page {
+    min-height: 100vh;
 }
 
-.loader-widget {
-    background: rgba(10, 15, 30, 0.4);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(0, 240, 255, 0.1);
-    border-radius: 32px;
-    padding: 60px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-    max-width: 500px;
+.speed-wrapper {
+    padding: 60px 20px;
+    max-width: 900px;
     margin: 0 auto;
+    width: 100%;
+}
+
+/* Header Section */
+.speed-header-card {
+    background: #ffffff;
+    border-radius: 32px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05);
+    margin-bottom: 40px;
+    border: 1px solid #f0f0f0;
     text-align: center;
 }
 
-.loader-widget h1 {
-    color: white;
-    font-size: 1.8rem;
-    font-weight: 800;
-    margin-bottom: 40px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
+.speed-banner-img {
+    width: 100%;
+    height: 350px;
+    object-fit: cover;
+    display: block;
 }
 
-.speed-display {
-    position: relative;
+.speed-intro-text {
+    padding: 35px;
+}
+
+.speed-intro-text h1 {
+    font-size: 2.4rem !important;
+    font-weight: 800 !important;
+    color: #1a202c !important;
+    margin-bottom: 10px !important;
+}
+
+/* Speed Widget */
+.speed-widget-card {
+    background: #ffffff;
+    border-radius: 32px;
+    padding: 50px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.04);
+    border: 1px solid #f0f0f0;
+    text-align: center;
+}
+
+.speed-circle-display {
     width: 250px;
     height: 250px;
-    margin: 0 auto 40px;
+    border-radius: 50%;
+    border: 12px solid #f1f5f9;
+    margin: 0 auto 30px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    flex-direction: column;
+    position: relative;
+    transition: all 0.3s ease;
 }
 
-.loader {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    border: 10px solid rgba(255, 255, 255, 0.05);
-    border-top: 10px solid var(--neon-cyan);
-    animation: speedSpin 1.5s linear infinite;
-    box-shadow: 0 0 20px var(--neon-cyan-transparent);
+.speed-circle-display.testing {
+    border-color: #4a90e2;
+    box-shadow: 0 0 30px rgba(74, 144, 226, 0.2);
+    animation: pulseBorder 1.5s infinite;
 }
 
-@keyframes speedSpin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+@keyframes pulseBorder {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
 }
 
-.speed-value {
+.speed-value-big {
     font-size: 4rem;
+    font-weight: 900;
+    color: #1a202c;
+    line-height: 1;
+}
+
+.speed-unit-label {
+    font-size: 1rem;
     font-weight: 800;
-    color: white;
-    text-shadow: 0 0 20px var(--neon-cyan-transparent);
+    color: #4a90e2;
+    margin-top: 5px;
 }
 
-.speed-unit {
-    font-size: 1.2rem;
-    color: var(--neon-cyan);
-    font-weight: 700;
-    letter-spacing: 2px;
-}
-
-.speed-status {
-    background: rgba(255, 255, 255, 0.05);
-    padding: 15px 25px;
-    border-radius: 100px;
-    color: #94a3b8;
+.speed-status-text {
     font-size: 0.9rem;
     font-weight: 600;
-    display: inline-block;
+    color: #718096;
     margin-bottom: 30px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.btn-speed {
-    background: var(--neon-cyan);
-    color: #070B19;
+.speed-btn-action {
+    padding: 16px 50px;
+    background: #1a202c !important;
+    color: #ffffff !important;
+    border-radius: 16px !important;
+    font-weight: 800 !important;
     border: none;
-    padding: 15px 40px;
-    border-radius: 100px;
-    font-weight: 800;
-    letter-spacing: 2px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 0 15px var(--neon-cyan-transparent);
+    transition: all 0.3s ease !important;
 }
 
-.btn-speed:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 30px var(--neon-cyan);
+.speed-btn-action:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
 }
 
-.ping-info {
+/* Ping Stats */
+.ping-stats-row {
     display: flex;
     justify-content: center;
     gap: 40px;
-    margin-top: 20px;
-    color: #94a3b8;
-    font-size: 0.85rem;
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid #f1f5f9;
 }
 
-.ping-item span {
+.stat-item-box {
+    text-align: center;
+}
+
+.stat-item-box label {
     display: block;
-    color: white;
-    font-size: 1.1rem;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #a0aec0;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
+.stat-item-box span {
+    font-size: 1.2rem;
     font-weight: 700;
-}
+    color: #2d3748;
+}

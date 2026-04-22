@@ -1,133 +1,182 @@
-.predictor-container {
-    padding: 60px 0;
-    min-height: 85vh;
-    background-color: transparent !important;
+/* PivotPredictor.css - Modern Career Switch Redesign */
+
+.pivot-page {
+    min-height: 100vh;
 }
 
-.predictor-card {
-    background: rgba(10, 15, 30, 0.4);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(0, 240, 255, 0.1);
+.pivot-wrapper {
+    padding: 60px 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Header Section */
+.pivot-header-card {
+    background: #ffffff;
     border-radius: 32px;
-    padding: 40px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05);
+    margin-bottom: 40px;
+    border: 1px solid #f0f0f0;
+    text-align: center;
 }
 
-.skill-input-card {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 20px;
-    padding: 40px;
-}
-
-/* Gauge Animation */
-.gauge-container {
-    position: relative;
-    width: 200px;
-    height: 100px;
-    margin: 0 auto 25px;
-}
-
-.gauge-ring {
+.pivot-banner-img {
     width: 100%;
-    height: 100%;
-    border: 15px solid rgba(255, 255, 255, 0.05);
-    border-bottom: 0;
-    border-radius: 100px 100px 0 0;
-    position: relative;
-}
-
-.gauge-fill {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: 15px solid var(--neon-cyan);
-    border-bottom: 0;
-    border-radius: 100px 100px 0 0;
-    transform-origin: bottom center;
-    transition: transform 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 0 20px var(--neon-cyan-transparent);
-}
-
-.gauge-value {
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 2.5rem;
-    font-weight: 800;
-    color: white;
-    text-shadow: 0 0 15px var(--neon-cyan-transparent);
-}
-
-.risk-tag {
-    padding: 6px 16px;
-    border-radius: 100px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    display: inline-block;
-    letter-spacing: 1px;
-}
-
-.risk-high { background: rgba(239, 68, 68, 0.1); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.2); }
-.risk-medium { background: rgba(245, 158, 11, 0.1); color: #fcd34d; border: 1px solid rgba(245, 158, 11, 0.2); }
-.risk-low { background: rgba(34, 197, 94, 0.1); color: #86efac; border: 1px solid rgba(34, 197, 94, 0.2); }
-
-.pivot-card {
-    background: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 20px;
-    padding: 25px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    border-top: 3px solid var(--neon-purple);
-}
-
-.pivot-card:hover {
-    background: rgba(168, 85, 247, 0.05);
-    border-color: var(--neon-purple);
-    transform: translateY(-8px);
-}
-
-.timeline-step {
-    border-left: 2px solid var(--neon-cyan);
-    padding-left: 25px;
-    padding-bottom: 30px;
-    position: relative;
-}
-
-.timeline-step::before {
-    content: '';
-    position: absolute;
-    left: -7px;
-    top: 0;
-    width: 12px;
-    height: 12px;
-    background: var(--neon-cyan);
-    border-radius: 50%;
-    box-shadow: 0 0 10px var(--neon-cyan);
-}
-
-.timeline-step strong {
-    color: white;
-    font-size: 1.1rem;
+    height: 400px;
+    object-fit: cover;
     display: block;
-    margin-bottom: 5px;
 }
 
-.timeline-step span {
-    color: #94a3b8;
-    font-size: 0.95rem;
-    line-height: 1.5;
+.pivot-intro-text {
+    padding: 40px;
 }
 
-.analysis-verdict {
-    background: rgba(255, 255, 255, 0.02);
+.pivot-intro-text h1 {
+    font-size: 2.6rem !important;
+    font-weight: 800 !important;
+    color: #1a202c !important;
+    margin-bottom: 12px !important;
+}
+
+.pivot-intro-text p {
+    font-size: 1.15rem;
+    color: #718096;
+}
+
+/* Assessment Card */
+.assessment-card {
+    background: #ffffff;
+    border-radius: 28px;
+    padding: 45px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.04);
+    border: 1px solid #f0f0f0;
+    margin-bottom: 40px;
+}
+
+.modern-pivot-input {
+    width: 100%;
+    padding: 18px 24px;
+    border-radius: 18px;
+    border: 2px solid #f1f5f9;
+    background: #f8fafc;
+    font-size: 1.1rem;
+    color: #1a202c;
+    transition: all 0.3s ease;
+    margin-bottom: 25px;
+}
+
+.modern-pivot-input:focus {
+    background: #ffffff;
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 5px rgba(74, 144, 226, 0.1);
+    outline: none;
+}
+
+.pivot-btn-primary {
+    padding: 16px 45px;
+    background: #1a202c !important;
+    color: #ffffff !important;
+    border-radius: 16px !important;
+    font-weight: 800 !important;
+    font-size: 1.1rem !important;
+    border: none;
+    transition: all 0.3s ease !important;
+}
+
+.pivot-btn-primary:hover:not(:disabled) {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1) !important;
+}
+
+/* Results Display */
+.result-display-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 30px;
+    margin-top: 50px;
+}
+
+.longevity-meter-box {
+    text-align: center;
     padding: 30px;
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
+    background: #f8fafc;
+    border-radius: 28px;
+    border: 1px solid #edf2f7;
+}
+
+.score-circle {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 10px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+}
+
+.score-value {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #1a202c;
+}
+
+.score-label {
+    font-size: 0.8rem;
+    color: #718096;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.verdict-box {
+    background: #ffffff;
+    border-radius: 28px;
+    padding: 35px;
+    border: 1px solid #edf2f7;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+}
+
+.verdict-box h4 {
+    font-weight: 800 !important;
+    color: #1a202c !important;
+    margin-bottom: 20px !important;
+}
+
+/* Pivot Cards */
+.pivot-options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 40px;
+}
+
+.modern-pivot-card {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 30px;
+    border: 1px solid #edf2f7;
+    transition: all 0.3s ease;
+}
+
+.modern-pivot-card:hover {
+    border-color: #4a90e2;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+}
+
+.skill-tag-pill {
+    padding: 4px 12px;
+    background: #ebf8ff;
+    color: #3182ce;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    display: inline-block;
+}
+
+@media (max-width: 992px) {
+    .result-display-grid { grid-template-columns: 1fr; }
 }

@@ -3,7 +3,7 @@ import "./JobDetails.css";
 import { TheUserContext } from '../UserContext/UserContext';
 import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
-import jobGraphic from "../../assets/ai_code.png";
+import bannerImg from "../../assets/job_details_banner.png";
 
 export default function JobDetails() {
   const { userData, jobs } = useContext(TheUserContext);
@@ -35,7 +35,7 @@ export default function JobDetails() {
     e.preventDefault();
 
     if (!coverLetter || !cvFile) {
-      setResponseMessage("Validation Error: CV and Cover Letter are required for neural synthesis.");
+      setResponseMessage("Please upload your CV and provide a cover letter.");
       return;
     }
 
@@ -44,7 +44,7 @@ export default function JobDetails() {
 
       const newApp = {
         appliedDate: new Date().toISOString(),
-        status: 'Protocol Initiated',
+        status: 'Submitted',
         coverLetter: coverLetter,
         cvName: cvFile.name,
         certificates: certificateFiles ? Array.from(certificateFiles).map(f => f.name) : []
@@ -54,7 +54,6 @@ export default function JobDetails() {
       existingApps.unshift(newApp);
       localStorage.setItem(`applications_${jobId}`, JSON.stringify(existingApps));
 
-      // ---- Sync to Application Tracker ----
       const trackerEntry = {
         title: currentJob?.title || currentJob?.jobTitle || "Applied Position",
         location: currentJob?.location || currentJob?.jobLocation || "Remote",
@@ -68,161 +67,177 @@ export default function JobDetails() {
         trackerList.unshift(trackerEntry);
         localStorage.setItem("appliedJobs", JSON.stringify(trackerList));
       }
-      // ------------------------------------
 
       setApplications(existingApps);
-      setResponseMessage("Application sequence confirmed. Protocol established.");
+      setResponseMessage("Application successfully submitted! We will contact you soon.");
       
       setCoverLetter("");
       setCvFile(null);
       setCertificateFiles(null);
     } catch (error) {
-      setResponseMessage("Transmission error: Unable to establish secure channel.");
+      setResponseMessage("Error submitting application. Please try again.");
     }
   };
 
   const runAnalysis = () => {
       if (!coverLetter && !cvFile) {
-          setResponseMessage("Neural Scan Error: Please provide source data (CV/Letter).");
+          setResponseMessage("Please provide a CV or cover letter to run analysis.");
           return;
       }
       setMatchScore('calculating');
       setTimeout(() => {
-          const score = Math.floor(Math.random() * (98 - 75 + 1)) + 75; // Always good scores for premium feel
+          const score = Math.floor(Math.random() * (98 - 75 + 1)) + 75;
           setMatchScore(score);
       }, 1500);
   };
 
   return (
-    <div className="container-fluid p-0 login-grand-wrapper">
+    <>
       <Header userData={userData} />
-      <div className="container job-details">
-        <div className="row g-5">
-           {/* Left Column: Job Info & Analysis */}
-           <div className="col-lg-7">
-              <div className="text-center mb-5 animate-in">
-                  <div className="position-relative d-inline-block mb-4">
-                      <div className="glow-effect" style={{top:'50%', left:'50%', transform:'translate(-50%, -50%)', width:'140%', height:'140%'}}></div>
-                      <img src={jobGraphic} alt="Job Analysis" className="img-fluid rounded-4 shadow-lg position-relative z-2" style={{maxWidth: '300px'}} />
-                  </div>
-                  <h1 className="text-white fw-bold display-5">Neural <span className="text-cyan">Application</span></h1>
-                  <p className="text-secondary">Execute your career transition via secure TalentAI channels.</p>
-              </div>
-
-              {/* Analysis HUD */}
-              <div className="analysis-card mb-5 animate-in" style={{animationDelay: '0.2s'}}>
-                <div className="d-flex justify-content-between align-items-center mb-4">
-                    <div>
-                        <h3 className="text-white fw-bold mb-1">Vector Synchronization</h3>
-                        <p className="text-secondary mb-0 small">Real-time matching against corporation requirements.</p>
-                    </div>
-                    <button className="btn btn-cyan-glow fw-bold px-4" onClick={runAnalysis}>
-                        {matchScore === 'calculating' ? 'SCANNING...' : 'EXECUTE SCAN'}
-                    </button>
+      
+      <div className="job-details-wrapper">
+        <div className="row g-4">
+          
+          {/* Left Column: Job Content */}
+          <div className="col-lg-8">
+            <div className="job-main-card">
+              <img src={bannerImg} alt="Job Banner" className="job-banner-img" />
+              
+              <div className="job-header-content">
+                <h1>{currentJob?.title || "Position Details"}</h1>
+                <div className="job-sub-header">
+                  <span><i className="fa-solid fa-building"></i> {currentJob?.company || "Innova Solutions"}</span>
+                  <span><i className="fa-solid fa-location-dot"></i> {currentJob?.location || "Remote"}</span>
+                  <span><i className="fa-solid fa-money-bill-wave"></i> {currentJob?.salaryRange || "$130k - $150k / year"}</span>
                 </div>
-                {matchScore && matchScore !== 'calculating' && (
-                    <div className="text-center py-4 border-top border-white border-opacity-10 mt-3 animate-in">
-                        <div className="display-3 fw-black text-cyan mb-2">{matchScore}%</div>
-                        <div className="text-white tracking-widest uppercase small">Job Match Coefficient</div>
-                    </div>
-                )}
               </div>
 
-              {/* Applications List */}
-              <div className="applications-section animate-in" style={{animationDelay: '0.4s'}}>
-                <h2 className="text-white mb-4"><i className="fa-solid fa-history text-cyan me-2"></i> Transmission Logs</h2>
-                {applications.length === 0 ? (
-                    <div className="application-card text-center py-5 opacity-50">
-                        <i className="fa-solid fa-folder-open mb-3 fs-1"></i>
-                        <p>No previous transmissions detected for this sector.</p>
+              <div className="job-body-content">
+                <div className="job-description-section">
+                  <h3>About the Role</h3>
+                  <p>
+                    We are looking for a dedicated professional to join our growing team. In this role, you will be responsible for 
+                    driving innovation and contributing to high-impact projects. You'll work alongside industry experts in a 
+                    collaborative environment that values creativity and technical excellence.
+                  </p>
+
+                  <h3>Key Requirements</h3>
+                  <ul className="job-requirements-list">
+                    <li>3+ years of experience in the relevant field.</li>
+                    <li>Strong understanding of modern industry standards and best practices.</li>
+                    <li>Excellent problem-solving skills and attention to detail.</li>
+                    <li>Ability to work effectively in a team and communicate ideas clearly.</li>
+                    <li>Proven track record of delivering high-quality results.</li>
+                  </ul>
+
+                  <h3>Benefits</h3>
+                  <ul className="job-requirements-list">
+                    <li>Competitive salary and performance bonuses.</li>
+                    <li>Flexible working hours and remote options.</li>
+                    <li>Comprehensive health and wellness programs.</li>
+                    <li>Professional development and continuous learning opportunities.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Application History */}
+            <div className="history-section">
+              <h4 className="mb-4 fw-bold">Recent Applications</h4>
+              {applications.length === 0 ? (
+                <div className="p-4 text-center text-muted bg-white rounded-4 border">
+                  No previous applications found for this role.
+                </div>
+              ) : (
+                applications.map((app, index) => (
+                  <div key={index} className="history-card">
+                    <div>
+                      <div className="filename">{app.cvName}</div>
+                      <div className="date">{new Date(app.appliedDate).toLocaleDateString()}</div>
                     </div>
+                    <span className="badge rounded-pill bg-light text-dark border px-3 py-2">{app.status}</span>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+
+          {/* Right Column: Sticky Sidebar Form */}
+          <div className="col-lg-4">
+            <div className="application-panel">
+              <h2>Apply Now</h2>
+              
+              <div className="analysis-mini-card">
+                <h4>AI Match Score</h4>
+                {matchScore === 'calculating' ? (
+                  <div className="text-center py-2">Scanning Profile...</div>
+                ) : matchScore ? (
+                  <div className="score-display">{matchScore}%</div>
                 ) : (
-                    <div className="applications-list">
-                        {applications.map((app, index) => (
-                            <div key={index} className="application-card mb-3">
-                                <div className="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <div className="text-secondary small mb-1">{new Date(app.appliedDate).toLocaleString()}</div>
-                                        <div className="text-white fw-bold">Neural Signature: {app.cvName}</div>
-                                    </div>
-                                    <span className="badge bg-purple-glow text-white px-3 py-2">{app.status}</span>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                  <button className="btn btn-outline-primary btn-sm w-100" onClick={runAnalysis}>
+                    Check Match Score
+                  </button>
                 )}
               </div>
-           </div>
 
-           {/* Right Column: Application Form */}
-           <div className="col-lg-5">
-              <div className="job-details-card animate-in" style={{animationDelay: '0.3s'}}>
-                  <h2 className="mb-4">Initialize Protocol</h2>
-                  <form onSubmit={handleSubmit}>
-                      <div className="mb-4">
-                          <label className="input-group-label">NEURAL SCRIBE (COVER LETTER)</label>
-                          <textarea
-                            className="glass-input w-100"
-                            rows="6"
-                            value={coverLetter}
-                            onChange={(e) => setCoverLetter(e.target.value)}
-                            placeholder="Identify your core value vectors..."
-                            required
-                          ></textarea>
-                      </div>
+              <form onSubmit={handleSubmit}>
+                <div className="form-group-custom">
+                  <label>Cover Letter</label>
+                  <textarea 
+                    className="modern-textarea" 
+                    rows="5" 
+                    placeholder="Tell us why you are a great fit..."
+                    value={coverLetter}
+                    onChange={(e) => setCoverLetter(e.target.value)}
+                    required
+                  ></textarea>
+                </div>
 
-                      <div className="mb-4">
-                          <label className="input-group-label">TECHNICAL SIGNATURE (CV)</label>
-                          <div className="glass-input p-0 position-relative">
-                              <input
-                                type="file"
-                                className="w-100 h-100 opacity-0 position-absolute cursor-pointer"
-                                onChange={(e) => setCvFile(e.target.files[0])}
-                                accept=".pdf,.doc,.docx"
-                                required
-                                style={{zIndex: 5}}
-                              />
-                              <div className="p-3 text-center opacity-75">
-                                  {cvFile ? cvFile.name : <><i className="fa-solid fa-cloud-arrow-up me-2"></i> UPLOAD DATA (PDF/DOC)</>}
-                              </div>
-                          </div>
-                      </div>
+                <div className="form-group-custom">
+                  <label>Your Resume (CV)</label>
+                  <div className="file-upload-box">
+                    <input 
+                      type="file" 
+                      className="position-absolute w-100 h-100 opacity-0 cursor-pointer" 
+                      onChange={(e) => setCvFile(e.target.files[0])}
+                      required
+                    />
+                    <i className="fa-solid fa-cloud-arrow-up"></i>
+                    <p>{cvFile ? cvFile.name : "Click to upload PDF/DOC"}</p>
+                  </div>
+                </div>
 
-                      <div className="mb-4">
-                          <label className="input-group-label">VERIFICATIONS (CERTIFICATES)</label>
-                          <div className="glass-input p-0 position-relative">
-                              <input
-                                type="file"
-                                className="w-100 h-100 opacity-0 position-absolute cursor-pointer"
-                                onChange={(e) => setCertificateFiles(e.target.files)}
-                                accept="image/*,.pdf"
-                                multiple
-                                style={{zIndex: 5}}
-                              />
-                              <div className="p-3 text-center opacity-75">
-                                  {certificateFiles && certificateFiles.length > 0 
-                                    ? `${certificateFiles.length} NODES SELECTED` 
-                                    : <><i className="fa-solid fa-shield me-2"></i> ATTACH CREDENTIALS</>}
-                              </div>
-                          </div>
-                      </div>
+                <div className="form-group-custom">
+                  <label>Certifications (Optional)</label>
+                  <div className="file-upload-box">
+                    <input 
+                      type="file" 
+                      className="position-absolute w-100 h-100 opacity-0 cursor-pointer" 
+                      multiple
+                      onChange={(e) => setCertificateFiles(e.target.files)}
+                    />
+                    <i className="fa-solid fa-shield-check"></i>
+                    <p>{certificateFiles ? `${certificateFiles.length} files selected` : "Upload additional proof"}</p>
+                  </div>
+                </div>
 
-                      <button type="submit" className="btn btn-cyan-glow w-100 py-3 fw-black tracking-widest mt-3">
-                          FINALIZE TRANSMISSION
-                      </button>
-                  </form>
+                <button type="submit" className="submit-app-btn">
+                  Submit Application
+                </button>
+              </form>
 
-                  {responseMessage && (
-                    <div className="alert bg-black bg-opacity-25 border-0 text-cyan mt-4 animate-in">
-                        <i className="fa-solid fa-info-circle me-2"></i> {responseMessage}
-                    </div>
-                  )}
-              </div>
-           </div>
+              {responseMessage && (
+                <div className="mt-4 p-3 bg-white rounded-3 border small text-center text-primary fw-bold">
+                  {responseMessage}
+                </div>
+              )}
+            </div>
+          </div>
+
         </div>
       </div>
+
       <Footer />
-    </div>
+    </>
   );
 }
-

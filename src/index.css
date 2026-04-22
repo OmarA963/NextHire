@@ -1,214 +1,170 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Montserrat:wght@500;600;700;800&display=swap');
 
 :root {
-  --font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --font-family: 'Nunito', system-ui, sans-serif;
+  --font-heading: 'Montserrat', system-ui, sans-serif;
   
-  /* NextHire Dark Theme Colors */
-  --bg-dark: #070B19;
-  --bg-gradient: radial-gradient(circle at 50% -20%, #151b33 0%, #070B19 60%, #03050C 100%);
-  --neon-cyan: #00f0ff;
-  --neon-cyan-transparent: rgba(0, 240, 255, 0.4);
-  --neon-purple: #b026ff;
-  --neon-purple-transparent: rgba(176, 38, 255, 0.4);
+  /* Mockup Colors */
+  --bg-split-left: #C5D6EC; /* Pastel Blue */
+  --bg-split-right: #F3D3BE; /* Pastel Peach */
   
-  /* Glassmorphism */
-  --glass-bg: rgba(255, 255, 255, 0.03);
-  --glass-border: rgba(255, 255, 255, 0.1);
-  --glass-blur: blur(16px);
+  --app-bg: #F4EFE6; /* Creamy off-white container */
+  --card-bg: #FFFFFF;
   
-  /* Text */
-  --text-primary: #ffffff;
-  --text-secondary: #a0aec0;
+  --text-primary: #1A1A1A;
+  --text-secondary: #718096;
   
-  --main-transition: all 0.4s ease-in-out;
+  --accent-blue: #A0C0E4;
+  --accent-green: #C6E5D1;
+  --accent-orange: #F5D1BB;
   
-  /* Overriding old variables mostly to not break inline styles entirely */
-  --special-color: #00f0ff;
-  --special-color-1:#b026ff;
-  --special-color-2: #098a61;
+  /* Keep old variables mapped to new to avoid breaking components */
+  --bg-dark: var(--card-bg);
+  --neon-cyan: #3182ce;
+  --neon-purple: #ed8936;
+  --neon-cyan-transparent: rgba(160, 192, 228, 0.2);
+  --neon-purple-transparent: rgba(245, 209, 187, 0.2);
+  
+  --main-transition: all 0.3s ease;
+  
+  --card-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  --app-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
 }
 
 body {
   font-family: var(--font-family) !important;
-  background: var(--bg-gradient) !important;
-  background-color: var(--bg-dark) !important;
-  background-attachment: fixed !important;
+  background: linear-gradient(90deg, var(--bg-split-left) 50%, var(--bg-split-right) 50%) !important;
   color: var(--text-primary) !important;
   min-height: 100vh;
   margin: 0;
   padding: 0;
   overflow-x: hidden;
-  position: relative;
-}
-
-/* Background Grid Overlay */
-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vw;
-  background-image: 
-    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-  background-size: 60px 60px;
-  pointer-events: none;
-  z-index: -10;
+  display: flex;
+  justify-content: center;
+  align-items: center; /* Centers the app container vertically */
 }
 
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
   font-weight: 700;
-  color: var(--text-primary);
-  letter-spacing: -0.02em;
+  color: var(--text-primary) !important;
 }
 
 p, span, div, li, label {
   color: var(--text-secondary);
 }
 
-h1 span, h2 span, h3 span {
-  color: var(--neon-cyan) !important;
-  text-shadow: 0 0 12px var(--neon-cyan-transparent) !important;
-}
-
 a {
-  color: var(--neon-cyan);
+  color: #4A90E2;
   transition: var(--main-transition);
   text-decoration: none;
 }
 
 a:hover {
-  color: var(--neon-purple);
-  text-shadow: 0 0 8px var(--neon-purple-transparent);
+  color: #357ABD;
 }
 
-/* Bootstrap Overrides globally to enforce Glassmorphism */
-/* We target everything that was white/light before */
+/* App Container Wrapper */
+#root {
+  width: 100%;
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.app-container {
+  background: var(--app-bg) !important;
+  border-radius: 24px;
+  box-shadow: var(--app-shadow);
+  overflow: hidden;
+  min-height: 85vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Cards */
 .card, .bg-white, .modal-content, .bg-light, form.bg-white, .dropdown-menu {
-  background: var(--glass-bg) !important;
-  backdrop-filter: var(--glass-blur) !important;
-  -webkit-backdrop-filter: var(--glass-blur) !important;
-  border: 1px solid var(--glass-border) !important;
+  background: var(--card-bg) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border: none !important;
   border-radius: 16px !important;
   color: var(--text-primary) !important;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4) !important;
-  transition: var(--main-transition);
+  box-shadow: var(--card-shadow) !important;
 }
 
-.card:hover {
-  border-color: var(--neon-cyan-transparent) !important;
-  box-shadow: 0 0 20px var(--neon-cyan-transparent) !important;
-}
-
-.card-title, .card-text, .modal-title, .modal-body {
-  color: var(--text-primary) !important;
-}
-
-.card-text {
-  color: var(--text-secondary) !important;
-}
-
-/* Form Overrides */
+/* Forms */
 input, textarea, select, .form-control {
-  background: rgba(0, 0, 0, 0.3) !important;
-  border: 1px solid var(--glass-border) !important;
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
   color: var(--text-primary) !important;
   border-radius: 8px !important;
+  box-shadow: none !important;
 }
 
 input:focus, textarea:focus, select:focus, .form-control:focus {
   outline: none !important;
-  border-color: var(--neon-cyan) !important;
-  box-shadow: 0 0 10px var(--neon-cyan-transparent) !important;
-  background: rgba(0, 0, 0, 0.5) !important;
-  color: white !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 0 0 3px rgba(160, 192, 228, 0.2) !important;
 }
 
 input::placeholder, textarea::placeholder {
-  color: #718096 !important;
+  color: #a0aec0 !important;
 }
 
 /* Buttons */
-button {
-  cursor: pointer;
-  font-family: inherit;
-}
 .btn {
   border-radius: 8px !important;
   font-weight: 600 !important;
   padding: 0.6em 1.4em !important;
-  transition: var(--main-transition) !important;
   border: none !important;
+  box-shadow: none !important;
 }
 
-.custom-btn, .btn-primary, .btn2 {
-  background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-purple) 100%) !important;
+.custom-btn, .btn-primary, .btn2, .btn-cyan-glow, .btn-purple-glow {
+  background: var(--text-primary) !important;
   color: #fff !important;
-  box-shadow: 0 4px 15px rgba(0, 240, 255, 0.2) !important;
+  box-shadow: none !important;
 }
 
-.custom-btn:hover, .btn-primary:hover, .btn2:hover, .active-link {
+.custom-btn:hover, .btn-primary:hover, .btn2:hover, .btn-cyan-glow:hover, .btn-purple-glow:hover {
+  background: #000 !important;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(176, 38, 255, 0.4) !important;
   color: #fff !important;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1) !important;
 }
 
-.btn-outline-primary, .btn-outline-secondary {
-  background: transparent !important;
-  border: 1px solid var(--neon-cyan) !important;
-  color: var(--neon-cyan) !important;
-}
+/* Badges */
+.badge-active { background: var(--accent-green); color: #2d3748; padding: 4px 12px; border-radius: 12px; font-size: 0.8rem; font-weight: 700;}
+.badge-applied { background: var(--accent-blue); color: #2d3748; padding: 4px 12px; border-radius: 12px; font-size: 0.8rem; font-weight: 700;}
+.badge-interview { background: var(--accent-orange); color: #2d3748; padding: 4px 12px; border-radius: 12px; font-size: 0.8rem; font-weight: 700;}
 
-.btn-outline-primary:hover, .btn-outline-secondary:hover {
-  background: rgba(0, 240, 255, 0.1) !important;
-  box-shadow: 0 0 15px var(--neon-cyan-transparent) !important;
-}
-
-/* Nav & Header specific overwriting to avoid pure white */
+/* Nav & Header */
 .navbar, header {
-  background: rgba(7, 11, 25, 0.7) !important;
-  backdrop-filter: blur(12px) !important;
-  border-bottom: 1px solid var(--glass-border) !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  border-bottom: 1px solid rgba(0,0,0,0.05) !important;
+  padding: 1rem 2rem !important;
+}
+
+.navbar-brand {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  color: var(--text-primary) !important;
 }
 
 .nav-link {
   color: var(--text-secondary) !important;
+  font-weight: 600;
 }
 
 .nav-link:hover, .nav-link.active {
-  color: var(--neon-cyan) !important;
-}
-
-/* Dropdowns */
-.dropdown-item {
-  color: var(--text-secondary) !important;
-}
-
-.dropdown-item:hover {
-  background: rgba(0, 240, 255, 0.1) !important;
-  color: var(--neon-cyan) !important;
-}
-
-/* Tables */
-table, .table {
   color: var(--text-primary) !important;
 }
-.table td, .table th {
-  border-color: var(--glass-border) !important;
-  background: transparent !important;
-  color: var(--text-secondary) !important;
-}
 
-/* Glow Utilities */
-.text-glow-cyan {
-  text-shadow: 0 0 10px var(--neon-cyan-transparent), 0 0 20px var(--neon-cyan-transparent) !important;
-}
-
-.text-gradient {
-  background: linear-gradient(to right, var(--neon-cyan), var(--neon-purple));
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+/* Helpers */
+.text-cyan, .text-purple {
+  color: var(--text-primary) !important; /* Override old neon text colors */
+  text-shadow: none !important;
 }
