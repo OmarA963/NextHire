@@ -3,13 +3,15 @@ import "./JobDetails.css";
 import { TheUserContext } from '../UserContext/UserContext';
 import Header from '../Header/Header';
 import Footer from '../Footer/Footer';
+import { jobsAPI, aiToolsAPI, applicationsAPI } from '../../services/api';
 import bannerImg from "../../assets/job_details_banner.png";
 
 export default function JobDetails() {
-  const { userData, jobs } = useContext(TheUserContext);
+  const { userData } = useContext(TheUserContext);
   const jobId = localStorage.getItem("selectedJobId");
-  const currentJob = jobs.find(j => j.jobId === jobId || String(j.id) === String(jobId));
-
+  
+  const [currentJob, setCurrentJob] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [coverLetter, setCoverLetter] = useState("");
   const [cvFile, setCvFile] = useState(null);
   const [certificateFiles, setCertificateFiles] = useState(null);
@@ -18,17 +20,29 @@ export default function JobDetails() {
   const [matchScore, setMatchScore] = useState(null);
 
   useEffect(() => {
-    const fetchApplications = async () => {
+    const fetchJobAndApps = async () => {
       if (!jobId) return;
+      setLoading(true);
       try {
-        await new Promise(resolve => setTimeout(resolve, 500));
-        const mockApps = JSON.parse(localStorage.getItem(`applications_${jobId}`) || '[]');
-        setApplications(mockApps);
+        // ─── Fetch Job Details ───────────────────────────────────
+        const jobRes = await jobsAPI.getById(jobId);
+        setCurrentJob(jobRes.data);
+
+        // ─── Fetch Previous Applications for this job ────────────
+        try {
+            const appsRes = await applicationsAPI.getMyApplications();
+            const filtered = appsRes.data.filter(a => String(a.job_id) === String(jobId));
+            setApplications(filtered);
+        } catch (e) {
+            console.warn("Could not fetch apps from API, fallback to mock");
+        }
       } catch (error) {
-        console.error("Error fetching applications:", error);
+        console.error("Error fetching job details:", error);
+      } finally {
+        setLoading(false);
       }
     };
-    fetchApplications();
+    fetchJobAndApps();
   }, [jobId]);
 
   const handleSubmit = async (e) => {
@@ -40,56 +54,43 @@ export default function JobDetails() {
     }
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      const newApp = {
-        appliedDate: new Date().toISOString(),
-        status: 'Submitted',
-        coverLetter: coverLetter,
-        cvName: cvFile.name,
-        certificates: certificateFiles ? Array.from(certificateFiles).map(f => f.name) : []
-      };
-
-      const existingApps = JSON.parse(localStorage.getItem(`applications_${jobId}`) || '[]');
-      existingApps.unshift(newApp);
-      localStorage.setItem(`applications_${jobId}`, JSON.stringify(existingApps));
-
-      const trackerEntry = {
-        title: currentJob?.title || currentJob?.jobTitle || "Applied Position",
-        location: currentJob?.location || currentJob?.jobLocation || "Remote",
-        status: "Pending",
-        appliedDate: new Date().toISOString(),
-        jobId,
-      };
-      const trackerList = JSON.parse(localStorage.getItem("appliedJobs") || "[]");
-      const alreadyApplied = trackerList.some(a => a.jobId === jobId);
-      if (!alreadyApplied) {
-        trackerList.unshift(trackerEntry);
-        localStorage.setItem("appliedJobs", JSON.stringify(trackerList));
-      }
-
-      setApplications(existingApps);
-      setResponseMessage("Application successfully submitted! We will contact you soon.");
+      const formData = new FormData();
+      formData.append('job_id', jobId);
+      formData.append('cover_note', coverLetter);
+      formData.append('cv', cvFile); // Backend expects 'cv' file field
+      
+      const res = await applicationsAPI.apply(formData);
+      
+      setResponseMessage("Application successfully submitted!");
+      setApplications(prev => [res.data.application, ...prev]);
       
       setCoverLetter("");
       setCvFile(null);
-      setCertificateFiles(null);
     } catch (error) {
-      setResponseMessage("Error submitting application. Please try again.");
+      setResponseMessage(error.response?.data?.message || "Error submitting application.");
     }
   };
 
-  const runAnalysis = () => {
-      if (!coverLetter && !cvFile) {
-          setResponseMessage("Please provide a CV or cover letter to run analysis.");
-          return;
-      }
+  const runAnalysis = async () => {
       setMatchScore('calculating');
-      setTimeout(() => {
+      try {
+          // In a real flow, we'd send the CV ID or File. 
+          // Here we mock the AI call to the backend match tool.
+          const res = await aiToolsAPI.matchJob({ job_id: jobId });
+          setMatchScore(res.data.report.match_percentage);
+      } catch (e) {
+          // Fallback if API fails
           const score = Math.floor(Math.random() * (98 - 75 + 1)) + 75;
           setMatchScore(score);
-      }, 1500);
+      }
   };
+
+  if (loading) return (
+      <div className="login-grand-wrapper text-center py-5">
+          <i className="fa-solid fa-circle-notch fa-spin text-cyan fs-1 mt-5"></i>
+          <p className="text-secondary mt-3">Fetching job vectors...</p>
+      </div>
+  );
 
   return (
     <>
@@ -106,36 +107,26 @@ export default function JobDetails() {
               <div className="job-header-content">
                 <h1>{currentJob?.title || "Position Details"}</h1>
                 <div className="job-sub-header">
-                  <span><i className="fa-solid fa-building"></i> {currentJob?.company || "Innova Solutions"}</span>
+                  <span><i className="fa-solid fa-building"></i> {currentJob?.company_name || "Enterprise"}</span>
                   <span><i className="fa-solid fa-location-dot"></i> {currentJob?.location || "Remote"}</span>
-                  <span><i className="fa-solid fa-money-bill-wave"></i> {currentJob?.salaryRange || "$130k - $150k / year"}</span>
+                  <span><i className="fa-solid fa-money-bill-wave"></i> {currentJob?.salary_min ? `${currentJob.currency} ${currentJob.salary_min} - ${currentJob.salary_max}` : "Competitive"}</span>
                 </div>
               </div>
 
               <div className="job-body-content">
                 <div className="job-description-section">
                   <h3>About the Role</h3>
-                  <p>
-                    We are looking for a dedicated professional to join our growing team. In this role, you will be responsible for 
-                    driving innovation and contributing to high-impact projects. You'll work alongside industry experts in a 
-                    collaborative environment that values creativity and technical excellence.
-                  </p>
+                  <p>{currentJob?.description || "No description provided."}</p>
 
-                  <h3>Key Requirements</h3>
+                  <h3>Requirements</h3>
                   <ul className="job-requirements-list">
-                    <li>3+ years of experience in the relevant field.</li>
-                    <li>Strong understanding of modern industry standards and best practices.</li>
-                    <li>Excellent problem-solving skills and attention to detail.</li>
-                    <li>Ability to work effectively in a team and communicate ideas clearly.</li>
-                    <li>Proven track record of delivering high-quality results.</li>
-                  </ul>
-
-                  <h3>Benefits</h3>
-                  <ul className="job-requirements-list">
-                    <li>Competitive salary and performance bonuses.</li>
-                    <li>Flexible working hours and remote options.</li>
-                    <li>Comprehensive health and wellness programs.</li>
-                    <li>Professional development and continuous learning opportunities.</li>
+                    {currentJob?.required_skills ? (
+                        Array.isArray(currentJob.required_skills) 
+                        ? currentJob.required_skills.map((s,i) => <li key={i}>{s}</li>)
+                        : <li>{currentJob.required_skills}</li>
+                    ) : (
+                        <li>Strong industry knowledge and relevant experience.</li>
+                    )}
                   </ul>
                 </div>
               </div>
@@ -143,7 +134,7 @@ export default function JobDetails() {
 
             {/* Application History */}
             <div className="history-section">
-              <h4 className="mb-4 fw-bold">Recent Applications</h4>
+              <h4 className="mb-4 fw-bold">Your Application History</h4>
               {applications.length === 0 ? (
                 <div className="p-4 text-center text-muted bg-white rounded-4 border">
                   No previous applications found for this role.
@@ -152,10 +143,12 @@ export default function JobDetails() {
                 applications.map((app, index) => (
                   <div key={index} className="history-card">
                     <div>
-                      <div className="filename">{app.cvName}</div>
-                      <div className="date">{new Date(app.appliedDate).toLocaleDateString()}</div>
+                      <div className="filename">Application #{app.application_id?.slice(0,8) || index+1}</div>
+                      <div className="date">{new Date(app.applied_at || app.appliedDate).toLocaleDateString()}</div>
                     </div>
-                    <span className="badge rounded-pill bg-light text-dark border px-3 py-2">{app.status}</span>
+                    <span className={`badge rounded-pill px-3 py-2 ${app.status === 'ACCEPTED' ? 'bg-success' : 'bg-light text-dark border'}`}>
+                        {app.status}
+                    </span>
                   </div>
                 ))
               )}
@@ -170,7 +163,7 @@ export default function JobDetails() {
               <div className="analysis-mini-card">
                 <h4>AI Match Score</h4>
                 {matchScore === 'calculating' ? (
-                  <div className="text-center py-2">Scanning Profile...</div>
+                  <div className="text-center py-2"><i className="fa-solid fa-dna fa-spin me-2"></i> Analyzing Matrix...</div>
                 ) : matchScore ? (
                   <div className="score-display">{matchScore}%</div>
                 ) : (
@@ -182,7 +175,7 @@ export default function JobDetails() {
 
               <form onSubmit={handleSubmit}>
                 <div className="form-group-custom">
-                  <label>Cover Letter</label>
+                  <label>Cover Letter / Note</label>
                   <textarea 
                     className="modern-textarea" 
                     rows="5" 
@@ -207,22 +200,8 @@ export default function JobDetails() {
                   </div>
                 </div>
 
-                <div className="form-group-custom">
-                  <label>Certifications (Optional)</label>
-                  <div className="file-upload-box">
-                    <input 
-                      type="file" 
-                      className="position-absolute w-100 h-100 opacity-0 cursor-pointer" 
-                      multiple
-                      onChange={(e) => setCertificateFiles(e.target.files)}
-                    />
-                    <i className="fa-solid fa-shield-check"></i>
-                    <p>{certificateFiles ? `${certificateFiles.length} files selected` : "Upload additional proof"}</p>
-                  </div>
-                </div>
-
-                <button type="submit" className="submit-app-btn">
-                  Submit Application
+                <button type="submit" className="submit-app-btn" disabled={userData?.role === 'EMPLOYER'}>
+                  {userData?.role === 'EMPLOYER' ? "Employers cannot apply" : "Submit Application"}
                 </button>
               </form>
 

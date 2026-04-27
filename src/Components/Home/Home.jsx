@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import Header from "../Header/Header";
 import Footer from "../Footer/Footer";
+import { TheUserContext } from "../UserContext/UserContext";
 import "./Home.css";
 
 import heroImg1 from "../../assets/hero_img_1.png";
@@ -9,6 +10,8 @@ import heroImg2 from "../../assets/hero_img_2.png";
 import heroImg3 from "../../assets/hero_img_3.png";
 
 export default function Home() {
+  const { jobs, searchQuery, setSearchQuery, handleSearch } = useContext(TheUserContext);
+
   return (
     <div className="landing-page-wrapper pb-5">
       <Header />
@@ -44,27 +47,75 @@ export default function Home() {
             </p>
             
             {/* Search Bar */}
-            <div className="hero-search-wrapper mx-auto position-relative" style={{ maxWidth: '700px' }}>
+            <form onSubmit={handleSearch} className="hero-search-wrapper mx-auto position-relative" style={{ maxWidth: '700px' }}>
               <div className="search-box bg-white rounded-pill shadow-lg d-flex align-items-center p-2 mb-3">
                 <input 
                   type="text" 
+                  name="search"
                   className="form-control border-0 bg-transparent ps-4 fs-5" 
                   placeholder="Find your dream job... (e.g., Software Engineer, Marketing)" 
                   style={{ boxShadow: 'none' }}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <button className="btn btn-search rounded-circle d-flex justify-content-center align-items-center" style={{ width: '50px', height: '50px', backgroundColor: '#f8f9fa' }}>
+                <button type="submit" className="btn btn-search rounded-circle d-flex justify-content-center align-items-center" style={{ width: '50px', height: '50px', backgroundColor: '#f8f9fa' }}>
                   <i className="fa-solid fa-magnifying-glass text-secondary"></i>
                 </button>
               </div>
               
               {/* Tags */}
               <div className="d-flex justify-content-center gap-3 flex-wrap">
-                <span className="badge rounded-pill bg-light text-dark border px-3 py-2 fw-normal">Engineering</span>
-                <span className="badge rounded-pill bg-light text-dark border px-3 py-2 fw-normal">Full-time</span>
-                <span className="badge rounded-pill bg-light text-dark border px-3 py-2 fw-normal">New York</span>
-                <span className="badge rounded-pill bg-light text-dark border px-3 py-2 fw-normal">Data Science</span>
+                <span className="badge rounded-pill bg-light text-dark border px-3 py-2 fw-normal cursor-pointer" onClick={() => setSearchQuery('Engineering')}>Engineering</span>
+                <span className="badge rounded-pill bg-light text-dark border px-3 py-2 fw-normal cursor-pointer" onClick={() => setSearchQuery('Remote')}>Remote</span>
+                <span className="badge rounded-pill bg-light text-dark border px-3 py-2 fw-normal cursor-pointer" onClick={() => setSearchQuery('New York')}>New York</span>
+                <span className="badge rounded-pill bg-light text-dark border px-3 py-2 fw-normal cursor-pointer" onClick={() => setSearchQuery('Data Science')}>Data Science</span>
               </div>
+            </form>
+          </div>
+        </div>
+
+        {/* ... (Keep Stats & Benefits sections same) ... */}
+        {/* Skipping lines for brevity in replacement but keeping logic */}
+
+        {/* Dynamic Job Listings */}
+        <div className="jobs-container rounded-5 p-5 mb-5 shadow-sm" style={{ backgroundColor: '#D9E8F5', marginTop: '100px' }}>
+          <div className="d-flex justify-content-between align-items-end mb-4">
+            <div>
+              <h2 className="fw-bold text-dark mb-2">Dynamic job listings</h2>
+              <p className="text-secondary mb-0">Create perfect teams and connect with top talent<br/>including your dynamic job listings.</p>
             </div>
+            <Link to="/alljobs" className="btn bg-white rounded-pill text-dark px-4 py-2 fw-semibold shadow-sm">
+              View All <i className="fa-solid fa-chevron-right ms-2 small"></i>
+            </Link>
+          </div>
+
+          <div className="row g-4">
+            {jobs.length > 0 ? jobs.slice(0, 3).map((item) => (
+              <div className="col-md-4" key={item.jobId}>
+                <Link to="/jobdetails" onClick={() => localStorage.setItem("selectedJobId", item.jobId)} className="text-decoration-none">
+                  <div className="card bg-white border-0 rounded-4 p-4 shadow-sm h-100 transition-all hover-lift">
+                    <div className="d-flex justify-content-between align-items-start mb-3">
+                      <div className="d-flex align-items-center">
+                        <div className="bg-dark rounded p-2 me-2 d-flex align-items-center justify-content-center" style={{ width: '32px', height: '32px' }}>
+                          <i className="fa-solid fa-chart-line text-white small"></i>
+                        </div>
+                        <span className="text-dark small fw-semibold">{item.location}</span>
+                      </div>
+                      <span className="badge rounded-pill text-success" style={{ backgroundColor: '#E6F4EA' }}>{item.type}</span>
+                    </div>
+                    <h5 className="fw-bold text-dark mb-1">{item.title}</h5>
+                    <p className="text-secondary small mb-4">{item.company}</p>
+                    <div className="d-flex align-items-center mt-auto pt-3 border-top">
+                      <span className="text-primary fw-bold small">{item.salaryRange}</span>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            )) : (
+              <div className="col-12 text-center py-4">
+                  <p className="text-secondary">Loading fresh opportunities...</p>
+              </div>
+            )}
           </div>
         </div>
 

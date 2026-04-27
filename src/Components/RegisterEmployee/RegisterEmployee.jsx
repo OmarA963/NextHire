@@ -6,6 +6,7 @@ import { useFormik } from 'formik';
 import * as Yup from "yup";
 import Webcam from 'react-webcam';
 import * as faceapi from 'face-api.js';
+import { authAPI } from '../../services/api';
 import './RegisterEmployee.css';
 import registerBanner from '../../assets/ai_register.png';
 
@@ -73,22 +74,38 @@ export default function RegisterEmployee() {
             }
             setIsLoading(true);
             try {
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                const users = JSON.parse(localStorage.getItem('users') || '[]');
-                if (users.find(u => u.email === values.email)) throw new Error("Email already exists.");
-
-                const newUser = { id: Date.now(), ...values, role: 'Employee' };
-                users.push(newUser);
-                localStorage.setItem('users', JSON.stringify(users));
-
-                // Save Face
-                const faceData = JSON.parse(localStorage.getItem('face_descriptors') || '[]');
-                faceData.push({ label: values.email, descriptor: faceDescriptor });
-                localStorage.setItem('face_descriptors', JSON.stringify(faceData));
-
+                // ─── Try Real API ────────────────────────────────────
+                await authAPI.register(values.name, values.email, values.password, 'CANDIDATE', faceDescriptor);
                 navigate('/login');
-            } catch (err) {
-                setError(err.message);
+            } catch (apiError) {
+                if (apiError.code === 'ERR_NETWORK' || apiError.code === 'ECONNREFUSED') {
+                    try {
+                        const users = JSON.parse(localStorage.getItem('users') || '[]');
+                        if (users.find(u => u.email?.toLowerCase() === values.email?.toLowerCase())) throw new Error("Email already registered (offline)");
+                        
+                        const newUser = { 
+                            ...values, 
+                            user_id: "mock-id-" + Date.now(), 
+                            role: 'CANDIDATE' 
+                        };
+                        users.push(newUser);
+                        localStorage.setItem('users', JSON.stringify(users));
+                        
+                        // Save face descriptor locally if available
+                        if (faceDescriptor) {
+                            const faceData = JSON.parse(localStorage.getItem('face_descriptors') || '[]');
+                            faceData.push({ label: values.email, descriptor: faceDescriptor });
+                            localStorage.setItem('face_descriptors', JSON.stringify(faceData));
+                        }
+                        
+                        navigate('/login');
+                    } catch (mockErr) {
+                        setError(mockErr.message);
+                    }
+                } else {
+                    const msg = apiError.response?.data?.message || 'Registration failed. Please try again.';
+                    setError(msg);
+                }
             } finally {
                 setIsLoading(false);
             }

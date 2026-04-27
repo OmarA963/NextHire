@@ -5,12 +5,13 @@ import { useFormik } from 'formik'
 import * as Yup from "yup"
 import Webcam from 'react-webcam'
 import * as faceapi from 'face-api.js'
+import { authAPI } from '../../services/api'
 import "./Login.css"
 
 export default function Login() {
     const { saveUserData } = useContext(TheUserContext);
     const navigate = useNavigate();
-    
+
     // UI State
     const [activeTab, setActiveTab] = useState(window.location.pathname === '/register' ? 'signup' : 'login');
     const [loginType, setLoginType] = useState('Employee'); // 'Employee' or 'Company'
@@ -24,7 +25,7 @@ export default function Login() {
     const [isModelsLoaded, setIsModelsLoaded] = useState(false);
     const [showWebcam, setShowWebcam] = useState(false);
     const [isFaceVerified, setIsFaceVerified] = useState(false);
-    const [verificationStatus, setVerificationStatus] = useState(null); 
+    const [verificationStatus, setVerificationStatus] = useState(null);
 
     useEffect(() => {
         const loadModels = async () => {
@@ -48,27 +49,41 @@ export default function Login() {
         setMessageError('');
         setMessageSuccess('');
         try {
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            const users = JSON.parse(localStorage.getItem('users') || '[]');
-            const user = users.find(u => u.email?.toLowerCase() === values.email?.toLowerCase() && u.password === values.password);
+            // ─── Try Real API ────────────────────────────────────────
+            const res = await authAPI.login(values.email, values.password);
+            const { token, user } = res.data;
 
-            if (user || isFaceVerified || faceVerified) { 
-                const mockUser = user || { email: values.email, id: "mock-id-123", name: "Mock FaceUser", role: loginType };
-                localStorage.setItem('token', "mock-jwt-token-" + Date.now());
-                localStorage.setItem('user', JSON.stringify(mockUser));
-                
-                // Ensure company-id is set for dashboards
-                if (mockUser.role === 'Company') {
-                    localStorage.setItem('company-id', mockUser.id || Date.now().toString());
-                }
+            localStorage.setItem('token', token);
+            localStorage.setItem('user', JSON.stringify(user));
 
-                saveUserData();
-                navigate("/");
-            } else {
-                setMessageError("Invalid email or password");
+            if (user.role === 'EMPLOYER') {
+                localStorage.setItem('company-id', user.user_id);
             }
-        } catch (error) {
-            setMessageError("Login failed. Please try again.");
+
+            saveUserData();
+            navigate("/");
+        } catch (apiError) {
+            // ─── Fallback to Offline Mode ────────────────────────────
+            if (apiError.code === 'ERR_NETWORK' || apiError.code === 'ECONNREFUSED' || !apiError.response) {
+                const offlineUsers = JSON.parse(localStorage.getItem('users') || '[]');
+                const user = offlineUsers.find(u => u.email?.toLowerCase() === values.email?.toLowerCase() && u.password === values.password);
+                
+                if (user) {
+                    const mockToken = "mock-jwt-token-" + user.user_id;
+                    localStorage.setItem('token', mockToken);
+                    localStorage.setItem('user', JSON.stringify(user));
+                    if (user.userType === 'Company' || user.role === 'EMPLOYER') {
+                        localStorage.setItem('company-id', user.user_id);
+                    }
+                    saveUserData();
+                    setMessageSuccess("Logged in (Offline Mode)");
+                    setTimeout(() => navigate("/"), 1500);
+                    return;
+                }
+            }
+
+            const msg = apiError.response?.data?.message || 'Unable to connect to the server. Please ensure the backend is running on port 5000.';
+            setMessageError(msg);
         } finally {
             setIsLoading(false);
         }
@@ -102,7 +117,7 @@ export default function Login() {
                             setMessageSuccess("Face matched successfully!");
                             setTimeout(() => setShowWebcam(false), 1000);
                             setMessageError("");
-                            
+
                             // Auto trigger login
                             handleLogin(loginFormik.values, true);
                         } else {
@@ -136,27 +151,8 @@ export default function Login() {
     });
 
     const handleSignup = async (values) => {
-        setIsLoading(true);
-        setMessageError('');
-        try {
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            const users = JSON.parse(localStorage.getItem('users') || '[]');
-            if (users.find(u => u.email?.toLowerCase() === values.email?.toLowerCase())) {
-                setMessageError("Email already exists");
-                setIsLoading(false);
-                return;
-            }
-            const newUser = { id: Date.now().toString(), ...values };
-            users.push(newUser);
-            localStorage.setItem('users', JSON.stringify(users));
-            setMessageSuccess("Account created! You can now log in.");
-            setActiveTab('login');
-            loginFormik.setFieldValue('email', values.email);
-        } catch (error) {
-            setMessageError("Signup failed. Please try again.");
-        } finally {
-            setIsLoading(false);
-        }
+        // Redirect to selection
+        setActiveTab('signup');
     };
 
     const loginFormik = useFormik({
@@ -176,22 +172,22 @@ export default function Login() {
             <div className="auth-glass-card position-relative">
                 {/* Header */}
                 <div className="auth-logo">
-                    <i className="fa-solid fa-chart-line me-2" style={{color: '#4A90E2'}}></i>
+                    <i className="fa-solid fa-chart-line me-2" style={{ color: '#4A90E2' }}></i>
                     NextHire
                 </div>
                 <h2 className="auth-title">Welcome to NextHire</h2>
 
                 {/* Tabs */}
                 <div className="auth-tabs">
-                    <div 
+                    <div
                         className={`auth-tab ${activeTab === 'login' ? 'active' : ''}`}
-                        onClick={() => {setActiveTab('login'); setMessageError(''); setMessageSuccess('');}}
+                        onClick={() => { setActiveTab('login'); setMessageError(''); setMessageSuccess(''); }}
                     >
                         LOGIN
                     </div>
-                    <div 
+                    <div
                         className={`auth-tab ${activeTab === 'signup' ? 'active' : ''}`}
-                        onClick={() => {setActiveTab('signup'); setMessageError(''); setMessageSuccess('');}}
+                        onClick={() => { setActiveTab('signup'); setMessageError(''); setMessageSuccess(''); }}
                     >
                         SIGN UP
                     </div>
@@ -206,13 +202,13 @@ export default function Login() {
                     <div className="animate-in">
                         {/* Login Type Toggle */}
                         <div className="login-type-toggle mb-4">
-                            <div 
+                            <div
                                 className={`type-option ${loginType === 'Employee' ? 'active employee' : ''}`}
                                 onClick={() => setLoginType('Employee')}
                             >
                                 <i className="fa-solid fa-user-tie me-2"></i>Candidate
                             </div>
-                            <div 
+                            <div
                                 className={`type-option ${loginType === 'Company' ? 'active company' : ''}`}
                                 onClick={() => setLoginType('Company')}
                             >
@@ -227,10 +223,10 @@ export default function Login() {
                             <div className="auth-form-group">
                                 <label className="auth-label">Email Address</label>
                                 <div className="auth-input-container">
-                                    <input 
-                                        type="email" 
+                                    <input
+                                        type="email"
                                         name="email"
-                                        className="auth-input" 
+                                        className="auth-input"
                                         placeholder="example@email.com"
                                         onChange={loginFormik.handleChange}
                                         onBlur={loginFormik.handleBlur}
@@ -238,20 +234,20 @@ export default function Login() {
                                     />
                                 </div>
                             </div>
-                            
+
                             <div className="auth-form-group">
                                 <label className="auth-label">Password</label>
                                 <div className="auth-input-container">
-                                    <input 
-                                        type={showPassword ? "text" : "password"} 
+                                    <input
+                                        type={showPassword ? "text" : "password"}
                                         name="password"
-                                        className="auth-input" 
+                                        className="auth-input"
                                         placeholder="••••••••"
                                         onChange={loginFormik.handleChange}
                                         onBlur={loginFormik.handleBlur}
                                         value={loginFormik.values.password}
                                     />
-                                    <i 
+                                    <i
                                         className={`fa-solid ${showPassword ? 'fa-eye-slash' : 'fa-eye'} auth-icon-right`}
                                         onClick={() => setShowPassword(!showPassword)}
                                     ></i>
@@ -259,9 +255,9 @@ export default function Login() {
                                 <a href="#" className="auth-forgot">Forgot Password?</a>
                             </div>
 
-                            <button 
-                                type="submit" 
-                                className="auth-btn-primary" 
+                            <button
+                                type="submit"
+                                className="auth-btn-primary"
                                 disabled={isLoading}
                             >
                                 {isLoading ? <i className="fa-solid fa-circle-notch fa-spin"></i> : (isFaceVerified ? 'Face Verified - Logging In...' : 'Sign In')}
@@ -290,10 +286,10 @@ export default function Login() {
                             </button>
                         </div>
                     </div>
-                                ) : (
+                ) : (
                     <div className="animate-in">
                         <p className="auth-subtitle text-center mb-4">Choose your journey on NextHire.</p>
-                        
+
                         <div className="d-flex flex-column gap-3">
                             {/* Candidate Choice */}
                             <Link to="/registeremployee" className="signup-choice-card">
@@ -341,9 +337,9 @@ export default function Login() {
                         <button className="close-modal-btn" onClick={() => setShowWebcam(false)}>
                             <i className="fa-solid fa-times"></i>
                         </button>
-                        <h4 className="mb-3" style={{color: '#1A1A1A'}}><i className="fa-solid fa-face-viewfinder text-primary me-2"></i>Face Verification</h4>
+                        <h4 className="mb-3" style={{ color: '#1A1A1A' }}><i className="fa-solid fa-face-viewfinder text-primary me-2"></i>Face Verification</h4>
                         <p className="text-secondary small mb-4">Position your face in the center of the frame</p>
-                        
+
                         {isModelsLoaded ? (
                             <>
                                 <Webcam
@@ -363,7 +359,7 @@ export default function Login() {
                                 <p>Loading biometric models...</p>
                             </div>
                         )}
-                        
+
                         {verificationStatus === 'failed' && (
                             <p className="text-danger small mt-3">Match failed. Please try again.</p>
                         )}

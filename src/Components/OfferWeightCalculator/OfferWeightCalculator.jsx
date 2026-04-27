@@ -20,16 +20,16 @@ export default function OfferWeightCalculator() {
 
     const calculateValues = () => {
         if (!offerA.salary || !offerB.salary) return;
-        
+
         setIsAnalyzing(true);
         setTimeout(() => {
             const processOffer = (off) => {
                 const s = parseFloat(off.salary) || 0;
                 const c = parseFloat(off.commute) || 0;
 
-                const salaryScore = (s / 150000) * 45; 
+                const salaryScore = (s / 150000) * 45;
                 const growthScore = off.growth * 3.0;
-                const commutePenalty = (c / 120) * 15; 
+                const commutePenalty = (c / 120) * 15;
                 const stabilityScore = off.stability * 1.5;
                 const benefitsScore = off.benefits * 1.5;
 
@@ -43,7 +43,7 @@ export default function OfferWeightCalculator() {
                 scoreA,
                 scoreB,
                 winner: scoreA > scoreB ? "Offer A" : "Offer B",
-                verdict: scoreA > scoreB 
+                verdict: scoreA > scoreB
                     ? "Offer A provides the best overall balance between financial reward and professional sustainability."
                     : "Offer B is the superior choice for long-term growth and quality of life."
             });
@@ -55,7 +55,7 @@ export default function OfferWeightCalculator() {
     return (
         <div className="offer-calc-page">
             <Header />
-            
+
             <div className="offer-calc-wrapper">
                 {/* Header Section */}
                 <div className="offer-header-card">
@@ -73,39 +73,39 @@ export default function OfferWeightCalculator() {
                         <div className="col-lg-5">
                             <div className="offer-column">
                                 <h3>Offer Alpha <i className="fa-solid fa-building-circle-check text-primary"></i></h3>
-                                
+
                                 <div className="mb-4">
                                     <label className="slider-label">Annual Salary ($)</label>
-                                    <input 
-                                        type="number" 
+                                    <input
+                                        type="number"
                                         className="modern-calc-input"
                                         placeholder="e.g. 95000"
                                         value={offerA.salary}
-                                        onChange={(e) => setOfferA({...offerA, salary: e.target.value})}
+                                        onChange={(e) => setOfferA({ ...offerA, salary: e.target.value })}
                                     />
                                 </div>
 
                                 <div className="mb-4">
                                     <label className="slider-label">Daily Commute (mins)</label>
-                                    <input 
-                                        type="number" 
+                                    <input
+                                        type="number"
                                         className="modern-calc-input"
                                         placeholder="e.g. 45"
                                         value={offerA.commute}
-                                        onChange={(e) => setOfferA({...offerA, commute: e.target.value})}
+                                        onChange={(e) => setOfferA({ ...offerA, commute: e.target.value })}
                                     />
                                 </div>
 
                                 <div className="mb-4">
                                     <label className="slider-label">Career Growth <span>{offerA.growth}/10</span></label>
-                                    <input type="range" className="form-range" min="1" max="10" value={offerA.growth} 
-                                        onChange={(e) => setOfferA({...offerA, growth: e.target.value})} />
+                                    <input type="range" className="form-range" min="1" max="10" value={offerA.growth}
+                                        onChange={(e) => setOfferA({ ...offerA, growth: e.target.value })} />
                                 </div>
 
                                 <div className="mb-4">
                                     <label className="slider-label">Benefits Index <span>{offerA.benefits}/10</span></label>
-                                    <input type="range" className="form-range" min="1" max="10" value={offerA.benefits} 
-                                        onChange={(e) => setOfferA({...offerA, benefits: e.target.value})} />
+                                    <input type="range" className="form-range" min="1" max="10" value={offerA.benefits}
+                                        onChange={(e) => setOfferA({ ...offerA, benefits: e.target.value })} />
                                 </div>
                             </div>
                         </div>
@@ -113,8 +113,8 @@ export default function OfferWeightCalculator() {
                         {/* VS Divider */}
                         <div className="col-lg-2 vs-divider">
                             <div className="vs-circle">VS</div>
-                            <button 
-                                className="calc-btn-primary" 
+                            <button
+                                className="calc-btn-primary"
                                 onClick={calculateValues}
                                 disabled={isAnalyzing || !offerA.salary || !offerB.salary}
                             >
@@ -126,39 +126,39 @@ export default function OfferWeightCalculator() {
                         <div className="col-lg-5">
                             <div className="offer-column">
                                 <h3>Offer Beta <i className="fa-solid fa-building-circle-arrow-right text-success"></i></h3>
-                                
+
                                 <div className="mb-4">
                                     <label className="slider-label">Annual Salary ($)</label>
-                                    <input 
-                                        type="number" 
+                                    <input
+                                        type="number"
                                         className="modern-calc-input"
                                         placeholder="e.g. 105000"
                                         value={offerB.salary}
-                                        onChange={(e) => setOfferB({...offerB, salary: e.target.value})}
+                                        onChange={(e) => setOfferB({ ...offerB, salary: e.target.value })}
                                     />
                                 </div>
 
                                 <div className="mb-4">
                                     <label className="slider-label">Daily Commute (mins)</label>
-                                    <input 
-                                        type="number" 
+                                    <input
+                                        type="number"
                                         className="modern-calc-input"
                                         placeholder="e.g. 20"
                                         value={offerB.commute}
-                                        onChange={(e) => setOfferB({...offerB, commute: e.target.value})}
+                                        onChange={(e) => setOfferB({ ...offerB, commute: e.target.value })}
                                     />
                                 </div>
 
                                 <div className="mb-4">
                                     <label className="slider-label">Career Growth <span>{offerB.growth}/10</span></label>
-                                    <input type="range" className="form-range" min="1" max="10" value={offerB.growth} 
-                                        onChange={(e) => setOfferB({...offerB, growth: e.target.value})} />
+                                    <input type="range" className="form-range" min="1" max="10" value={offerB.growth}
+                                        onChange={(e) => setOfferB({ ...offerB, growth: e.target.value })} />
                                 </div>
 
                                 <div className="mb-4">
                                     <label className="slider-label">Benefits Index <span>{offerB.benefits}/10</span></label>
-                                    <input type="range" className="form-range" min="1" max="10" value={offerB.benefits} 
-                                        onChange={(e) => setOfferB({...offerB, benefits: e.target.value})} />
+                                    <input type="range" className="form-range" min="1" max="10" value={offerB.benefits}
+                                        onChange={(e) => setOfferB({ ...offerB, benefits: e.target.value })} />
                                 </div>
                             </div>
                         </div>
@@ -197,7 +197,7 @@ export default function OfferWeightCalculator() {
                     )}
                 </div>
             </div>
-            
+
             <Footer />
         </div>
     );

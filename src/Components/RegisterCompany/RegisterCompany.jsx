@@ -4,6 +4,7 @@ import Footer from '../Footer/Footer';
 import { Link, useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import * as Yup from "yup";
+import { authAPI } from '../../services/api';
 import './RegisterCompany.css';
 import companyBanner from '../../assets/company_register.png';
 
@@ -41,31 +42,31 @@ export default function RegisterCompany() {
             setIsLoading(true);
             setError('');
             try {
-                // Mock Registration Logic
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                
-                const companies = JSON.parse(localStorage.getItem('companies') || '[]');
-                if (companies.find(c => c.email === values.email)) {
-                    throw new Error("This email is already registered.");
-                }
-
-                const newCompany = {
-                    id: Date.now(),
-                    ...values,
-                    role: 'Company'
-                };
-
-                companies.push(newCompany);
-                localStorage.setItem('companies', JSON.stringify(companies));
-
-                // Add to general users for login
-                const users = JSON.parse(localStorage.getItem('users') || '[]');
-                users.push({ ...newCompany });
-                localStorage.setItem('users', JSON.stringify(users));
-
+                // ─── Try Real API ────────────────────────────────────
+                // Register user account first, then update employer profile
+                await authAPI.register(values.name, values.email, values.password, 'EMPLOYER');
                 navigate('/login');
-            } catch (err) {
-                setError(err.message);
+            } catch (apiError) {
+                if (apiError.code === 'ERR_NETWORK' || apiError.code === 'ECONNREFUSED') {
+                    try {
+                        const users = JSON.parse(localStorage.getItem('users') || '[]');
+                        if (users.find(u => u.email?.toLowerCase() === values.email?.toLowerCase())) throw new Error("Email already registered (offline)");
+                        
+                        const newCompany = { 
+                            ...values, 
+                            user_id: "mock-id-" + Date.now(), 
+                            role: 'EMPLOYER' 
+                        };
+                        users.push(newCompany);
+                        localStorage.setItem('users', JSON.stringify(users));
+                        navigate('/login');
+                    } catch (mockErr) {
+                        setError(mockErr.message);
+                    }
+                } else {
+                    const msg = apiError.response?.data?.message || 'Registration failed. Please try again.';
+                    setError(msg);
+                }
             } finally {
                 setIsLoading(false);
             }

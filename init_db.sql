@@ -22,6 +22,7 @@ IF OBJECT_ID('ApplicationNotes',     'U') IS NOT NULL DROP TABLE ApplicationNote
 IF OBJECT_ID('JobApplications',      'U') IS NOT NULL DROP TABLE JobApplications;
 IF OBJECT_ID('CVs',                  'U') IS NOT NULL DROP TABLE CVs;
 IF OBJECT_ID('JobPosts',             'U') IS NOT NULL DROP TABLE JobPosts;
+IF OBJECT_ID('SavedJobs',            'U') IS NOT NULL DROP TABLE SavedJobs;
 IF OBJECT_ID('Employers',            'U') IS NOT NULL DROP TABLE Employers;
 IF OBJECT_ID('Candidates',           'U') IS NOT NULL DROP TABLE Candidates;
 IF OBJECT_ID('Users',                'U') IS NOT NULL DROP TABLE Users;
@@ -36,9 +37,7 @@ CREATE TABLE Users (
     email             NVARCHAR(256)    NOT NULL UNIQUE,
     password_hash     NVARCHAR(512)    NOT NULL,
     role              NVARCHAR(20)     NOT NULL CHECK (role IN ('CANDIDATE','EMPLOYER','ADMIN')),
-    face_id_verified  BIT              NOT NULL DEFAULT 0,
-    theme_preference  NVARCHAR(20)     NOT NULL DEFAULT 'light',
-    is_active         BIT              NOT NULL DEFAULT 1,
+    face_descriptor   NVARCHAR(MAX)    NULL,   -- JSON array of numbers
     created_at        DATETIME2        NOT NULL DEFAULT GETUTCDATE(),
     updated_at        DATETIME2        NOT NULL DEFAULT GETUTCDATE()
 );
@@ -141,6 +140,19 @@ CREATE TABLE JobApplications (
     applied_at        DATETIME2        NOT NULL DEFAULT GETUTCDATE(),
     last_updated      DATETIME2        NOT NULL DEFAULT GETUTCDATE(),
     CONSTRAINT UQ_CandidateJob UNIQUE (candidate_id, job_id)
+);
+
+-- ============================================================
+-- 6.5. SAVED_JOBS  (Feature: Neural Bookmarks)
+-- ============================================================
+CREATE TABLE SavedJobs (
+    save_id           UNIQUEIDENTIFIER NOT NULL PRIMARY KEY DEFAULT NEWID(),
+    candidate_id      UNIQUEIDENTIFIER NOT NULL
+        REFERENCES Candidates(candidate_id) ON DELETE CASCADE,
+    job_id            UNIQUEIDENTIFIER NOT NULL
+        REFERENCES JobPosts(job_id) ON DELETE CASCADE,
+    created_at        DATETIME2        NOT NULL DEFAULT GETUTCDATE(),
+    CONSTRAINT UQ_SavedJob UNIQUE (candidate_id, job_id)
 );
 
 -- ============================================================

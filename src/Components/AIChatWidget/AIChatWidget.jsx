@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef, useContext } from "react";
 import { TheUserContext } from "../UserContext/UserContext";
+import { chatAPI } from "../../services/api";
 import "./AIChatWidget.css";
 
 const INITIAL_MESSAGES = [
-    { id: 1, type: "ai", text: "Greetings! I am TalentAI Pulse. How can I assist your career evolution today?" }
+    { id: 'start', type: "ai", text: "Greetings! I am TalentAI Pulse. How can I assist your career evolution today?" }
 ];
 
 const PRESET_ANSWERS = {
@@ -12,11 +13,6 @@ const PRESET_ANSWERS = {
     "jobs": "The Global Job Matrix is updated every 15 minutes. Use the search bar to filter by your specific skill vectors.",
     "hello": "Greetings! I'm TalentAI Pulse, your gateway to the professional future. How can I help you today?",
     "speed": "The Speed Test (Neural Diagnostics) ensures your connection is stable enough for high-speed recruitment protocols.",
-    "react": "React is a high-performance UI library. Tip: Master 'hooks' and 'context' to build scalable job-tech platforms like this one!",
-    "coding": "The key to elite engineering is consistent practice and understanding underlying data structures. Which stack are you focusing on?",
-    "career": "In the AI era, the best career move is to become 'AI-Augmented'. Don't just learn a skill; learn how to use AI to 10x that skill.",
-    "salary": "Negotiation is a protocol of value exchange. Always research the market vector for your role before the final meeting.",
-    "future": "The future of work is decentralized and AI-driven. TalentAI is designed to keep you ahead of that curve."
 };
 
 export default function AIChatWidget() {
@@ -25,78 +21,81 @@ export default function AIChatWidget() {
     const [messages, setMessages] = useState(INITIAL_MESSAGES);
     const [inputText, setInputText] = useState("");
     const [isTyping, setIsTyping] = useState(false);
+    const [sessionId, setSessionId] = useState(null);
     const scrollRef = useRef(null);
 
-    // Auto-open greeting
+    // Auto-open greeting and load history
     useEffect(() => {
-        const timer = setTimeout(() => {
-            if (!isOpen && !localStorage.getItem("chat_opened")) {
-                setIsOpen(true);
-                localStorage.setItem("chat_opened", "true");
-            }
-        }, 3000);
-        return () => clearTimeout(timer);
-    }, []);
+        if (userData && isOpen && !sessionId) {
+            initChat();
+        }
+    }, [userData, isOpen]);
 
-    // Scroll to bottom
+    const initChat = async () => {
+        try {
+            const res = await chatAPI.start(window.location.pathname);
+            setSessionId(res.data.chat_id);
+        } catch (e) {
+            console.warn("Could not start real chat session, using mock mode.");
+        }
+    };
+
     useEffect(() => {
         scrollRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages, isTyping]);
 
-    const handleSend = (e) => {
+    const handleSend = async (e) => {
         e.preventDefault();
         if (!inputText.trim()) return;
 
-        const userMsg = { id: Date.now(), type: "user", text: inputText };
+        const text = inputText;
+        const userMsg = { id: Date.now(), type: "user", text: text };
         setMessages(prev => [...prev, userMsg]);
-        const query = inputText.toLowerCase();
         setInputText("");
         setIsTyping(true);
 
-        // Simulate AI Thinking
-        setTimeout(() => {
+        // Persistent Backend Call
+        if (sessionId) {
+            try {
+                await chatAPI.appendMessage(sessionId, 'user', text);
+            } catch (err) { console.error("History sync failed"); }
+        }
+
+        // AI Thinking Simulation
+        setTimeout(async () => {
             let aiText = "";
+            const query = text.toLowerCase();
             
-            // 1. Check Keywords
             for (const key in PRESET_ANSWERS) {
-                if (query.includes(key)) {
-                    aiText = PRESET_ANSWERS[key];
-                    break;
-                }
+                if (query.includes(key)) { aiText = PRESET_ANSWERS[key]; break; }
             }
 
-            // 2. Personalization
             if (!aiText && query.includes("name") && userData) {
-                aiText = `Identity confirmed. You are ${userData.name || userData.fullName}. Your professional profile is under continuous optimization.`;
+                aiText = `Identity confirmed. You are ${userData.name}. Your profile is active.`;
             }
 
-            // 3. Dynamic General Response HUD Logic
             if (!aiText) {
-                if (query.startsWith("how") || query.includes("how to")) {
-                    aiText = "Executing 'How-To' instructional protocol... To master this, I suggest breaking the task into 3 sub-nodes and applying iterative testing.";
-                } else if (query.startsWith("what") || query.includes("what is")) {
-                    aiText = "Scanning Global Knowledge Matrix... My current synthesis suggests this is a critical component of the modern professional landscape.";
-                } else if (query.startsWith("why")) {
-                    aiText = "Analyzing causal vectors... The 'Why' usually stems from a shift in industry standard protocols toward higher efficiency.";
-                } else {
-                    aiText = "Scanning Global Database... That is a fascinating inquiry. While I refine my specific data on that topic, I recommend focusing on how it impacts your career roadmap.";
-                }
+                aiText = "That's an interesting inquiry. I recommend exploring our AI tools to optimize your career roadmap.";
             }
 
             setMessages(prev => [...prev, { id: Date.now() + 1, type: "ai", text: aiText }]);
             setIsTyping(false);
-        }, 1500);
+
+            if (sessionId) {
+                try {
+                    await chatAPI.appendMessage(sessionId, 'ai', aiText);
+                } catch (err) { console.error("History sync failed"); }
+            }
+        }, 1200);
     };
 
     return (
         <div className={`chat-wrapper ${isOpen ? "open" : ""}`}>
-            {/* FAB Toggle */}
             <button className="chat-fab" onClick={() => setIsOpen(!isOpen)}>
                 {isOpen ? <i className="fa-solid fa-xmark"></i> : <i className="fa-solid fa-comment-dots"></i>}
                 {!isOpen && <span className="notification-pulse"></span>}
             </button>
 
-            {/* Chat Window */}
             <div className="chat-window">
                 <div className="chat-header">
                     <div className="d-flex align-items-center">

@@ -41,8 +41,8 @@ export default function PivotPredictor() {
 
             setResult({
                 longevity: Math.round(longevity),
-                verdict: score > 60 
-                    ? "Your current stack is at high risk of rapid AI displacement. Strategic pivot recommended immediately." 
+                verdict: score > 60
+                    ? "Your current stack is at high risk of rapid AI displacement. Strategic pivot recommended immediately."
                     : "Your skills are well-positioned. Focus on specialized niches to maintain a competitive edge.",
                 timelines: timelines.length > 0 ? timelines : [{ skill: 'General', text: 'Market shifting towards AI-first development.' }],
                 pivots: pivots.length > 0 ? pivots : [{ skill: 'Strategy', action: 'Adopt AI-orchestration tools and hybrid management.' }]
@@ -56,7 +56,7 @@ export default function PivotPredictor() {
     return (
         <div className="pivot-page">
             <Header />
-            
+
             <div className="pivot-wrapper">
                 {/* Header Section */}
                 <div className="pivot-header-card">
@@ -71,18 +71,18 @@ export default function PivotPredictor() {
                 <div className="assessment-card text-center">
                     <h3>Analyze Your Skillset</h3>
                     <p className="text-muted mb-4">Enter your core skills (comma-separated) to project your technical longevity.</p>
-                    
+
                     <div className="row justify-content-center">
                         <div className="col-lg-8">
-                            <input 
+                            <input
                                 type="text"
                                 className="modern-pivot-input text-center"
                                 placeholder="e.g. React, Python, UI Design, SQL..."
                                 value={skills}
                                 onChange={(e) => setSkills(e.target.value)}
                             />
-                            <button 
-                                className="pivot-btn-primary" 
+                            <button
+                                className="pivot-btn-primary"
                                 onClick={analyzeFuture}
                                 disabled={isAnalyzing || !skills}
                             >
@@ -152,7 +152,7 @@ export default function PivotPredictor() {
                     </div>
                 )}
             </div>
-            
+
             <Footer />
         </div>
     );
