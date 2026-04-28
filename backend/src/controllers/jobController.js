@@ -3,8 +3,13 @@ const db = require('../config/db');
 exports.createJob = async (req, res, next) => {
   try {
     const userId = req.user.user_id;
-    const { title, description, required_skills, salary_min, salary_max, currency, job_type, location, deadline } = req.body;
+    let { title, description, required_skills, salary_min, salary_max, currency, job_type, location, deadline } = req.body;
+    
+    // Normalize data: Convert empty strings to null for numeric/date fields
     const skillsJson = required_skills ? JSON.stringify(required_skills) : null;
+    const sMin = (salary_min === '' || salary_min === undefined) ? null : salary_min;
+    const sMax = (salary_max === '' || salary_max === undefined) ? null : salary_max;
+    const dLine = (deadline === '' || deadline === undefined) ? null : deadline;
 
     // Get employer_id
     const empResult = await db.query('SELECT employer_id FROM Employers WHERE user_id = $1', [userId]);
@@ -16,7 +21,7 @@ exports.createJob = async (req, res, next) => {
     const newJob = await db.query(
       `INSERT INTO JobPosts (employer_id, title, description, required_skills, salary_min, salary_max, currency, job_type, location, deadline) 
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`,
-      [employerId, title, description, skillsJson, salary_min, salary_max, currency || 'EGP', job_type, location, deadline]
+      [employerId, title, description, skillsJson, sMin, sMax, currency || 'EGP', job_type || 'FULL_TIME', location, dLine]
     );
 
     res.status(201).json({ message: 'Job created successfully', job: newJob.rows[0] });
@@ -31,7 +36,7 @@ exports.getJobs = async (req, res, next) => {
       `SELECT j.*, e.company_name, e.logo_url 
        FROM JobPosts j 
        JOIN Employers e ON j.employer_id = e.employer_id 
-       WHERE j.is_active = true 
+       WHERE j.status = 'OPEN' 
        ORDER BY j.created_at DESC`
     );
     res.json(jobs.rows);

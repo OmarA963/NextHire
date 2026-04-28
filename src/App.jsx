@@ -54,8 +54,8 @@ function App() {
         <Route path='/register' element={<Login />} />
         <Route path='/registeremployee' element={<RegisterEmployee />} />
         <Route path='/registeremployer' element={< RegisterCompany />} />
-        <Route path='/companypage' element={< CompanyPage />} />
-        <Route path='/employeepage' element={< EmployeePage />} />
+        <Route path='/companypage' element={<ProtectedRoute userData={userData}><CompanyPage /></ProtectedRoute>} />
+        <Route path='/employeepage' element={<ProtectedRoute userData={userData}><EmployeePage /></ProtectedRoute>} />
         <Route path='/internetspeed' element={<ProtectedRoute userData={userData}><InternetSpeedChecker /></ProtectedRoute>} />
         <Route path='/pulse' element={<TalentAIPulse />} />
         <Route path='/cvbuilder' element={<ProtectedRoute userData={userData}><CVBuilder /></ProtectedRoute>} />

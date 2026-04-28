@@ -6,8 +6,8 @@ import { jobsAPI, applicationsAPI } from '../../services/api';
 import './CompanyPage.css';
 import companyBanner from "../../assets/company_banner.png";
 
-export default function CompanyPage({ userData }) {
-    const { setJobs } = useContext(TheUserContext);
+export default function CompanyPage() {
+    const { setJobs, userData } = useContext(TheUserContext);
     const [isLoading, setIsLoading] = useState(false);
     const [myJobs, setMyJobs] = useState([]);
     const [selectedJobId, setSelectedJobId] = useState(null);
@@ -55,9 +55,9 @@ export default function CompanyPage({ userData }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const isEmployer = userData?.role === 'EMPLOYER' || userData?.role === 'Company';
+        const isEmployer = userData?.role?.toUpperCase() === 'EMPLOYER' || userData?.role?.toUpperCase() === 'COMPANY';
         if (!isEmployer) {
-            alert("Error: You must be logged in as an Employer to post jobs.");
+            alert("Error: You must be logged in as an Employer to post jobs. Your current role is: " + (userData?.role || "Unknown"));
             return;
         }
 
